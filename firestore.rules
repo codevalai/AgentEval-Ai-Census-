@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email'])
+        && data.keys().hasOnly(['uid', 'email', 'displayName', 'photoURL', 'createdAt'])
+        && data.uid is string && data.uid.size() <= 128
+        && data.uid == request.auth.uid
+        && data.email is string && data.email.size() <= 256;
+    }
+
+    function isValidTelemetry(data) {
+      return data.keys().hasAll(['userId', 'region', 'eventDigest'])
+        && data.keys().hasOnly(['userId', 'region', 'eventDigest', 'timestamp'])
+        && data.userId is string && data.userId.size() <= 128
+        && data.userId == request.auth.uid
+        && data.region is string && data.region.size() <= 64
+        && data.eventDigest is string && data.eventDigest.size() <= 128;
+    }
+
+    function isValidCensusStats(data) {
+      return data.keys().hasAll(['version', 'lastPersistedTimestamp', 'totalAgents'])
+        && data.version is number
+        && data.lastPersistedTimestamp is number
+        && data.totalAgents is number;
+    }
+
+    function isValidSovereignEvent(data) {
+      return data.keys().hasAll(['eventId', 'topic', 'actor', 'timestamp'])
+        && data.eventId is string && data.eventId.size() <= 128
+        && data.topic is string && data.topic.size() <= 128
+        && data.actor is string && data.actor.size() <= 128
+        && data.timestamp is number;
+    }
+
+    // Global persistent sovereign planetary census metrics
+    match /census/{documentId} {
+      allow read: if true;
+      allow create, update: if isValidId(documentId) && isValidCensusStats(request.resource.data);
+      allow delete: if false;
+    }
+
+    // Sovereign event fabric stream for cross-node event syncing
+    match /sovereignEvents/{eventId} {
+      allow read: if true;
+      allow create: if isValidId(eventId) && isValidSovereignEvent(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUser(request.resource.data)
+        && request.resource.data.uid == resource.data.uid;
+      allow delete: if false;
+
+      match /telemetry/{eventId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(eventId) && isValidTelemetry(request.resource.data);
+        allow update, delete: if false;
+      }
+    }
+  }
+}

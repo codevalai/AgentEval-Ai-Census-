@@ -1,0 +1,58 @@
+name: Planetary Telemetry & Merkle Spine Sink
+
+on:
+  schedule:
+    # Hourly export to repository telemetry ledger
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      publish_release_snapshot:
+        description: 'Publish snapshot as GitHub release asset'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  telemetry-export:
+    name: Export Census Snapshots & Merkle Ledger
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Sovereign Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Export Planetary Census Snapshot to JSON
+        run: |
+          mkdir -p data/telemetry
+          npx tsx -e "
+            import fs from 'fs';
+            import { sovereignAuditSpine } from './src/lib/merkleSpine.ts';
+            import { repoIndexerBackend } from './src/lib/repoIndexerBackend.ts';
+            import { threatRadarBackend } from './src/lib/threatRadarBackend.ts';
+
+            const payload = {
+              exportedAt: new Date().toISOString(),
+              spineHead: sovereignAuditSpine.getHead(),
+              threatSnapshot: threatRadarBackend.getTelemetrySnapshot(),
+              sovereign100Count: repoIndexerBackend.getRepos().length,
+              rfcStandard: 'RFC-001..005-COMPLIANT',
+            };
+            fs.writeFileSync('data/telemetry/census-snapshot-latest.json', JSON.stringify(payload, null, 2));
+            console.log('Telemetry bundle exported successfully to data/telemetry/census-snapshot-latest.json');
+          "
+
+      - name: Upload Telemetry Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: planetary-census-telemetry-bundle
+          path: data/telemetry/
+          retention-days: 30

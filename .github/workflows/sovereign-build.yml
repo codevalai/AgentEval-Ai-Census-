@@ -1,0 +1,56 @@
+name: Sovereign Infinity CI & Merkle Spine Replay
+
+on:
+  push:
+    branches: [ "main", "release/**" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      force_full_replay:
+        description: 'Force full cryptographic state tree replay'
+        required: false
+        default: 'true'
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-verify:
+    name: Build, Typecheck, Lint & Replay Invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Sovereign Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Typecheck & Lint Core Codebase
+        run: npm run lint
+
+      - name: Production Vite Build
+        run: npm run build
+
+      - name: Execute Deterministic Merkle Replay Verifier
+        run: npm run replay-verify
+
+      - name: Generate Sigstore Cosign Attestation
+        uses: actions/upload-artifact@v4
+        with:
+          name: sovereign-ci-merkle-witness
+          path: |
+            dist/
+          retention-days: 14

@@ -1,0 +1,30 @@
+# COD3EVAL SOVEREIGN INFINITY: CODEOWNERS
+# Enforcing Role-Based Access Control (RBAC) per RFC-001..005 Governance
+
+# Default fallback
+* @nicholasbrianbn
+
+# Subsystem 1: Ingestion Backbone (USGS, Repos, Live Harvests, DLQ)
+/src/lib/ingestionBackbone.ts @nicholasbrianbn # CENSUS_OPERATOR
+/src/components/LiveHarvestMonitor.tsx @nicholasbrianbn
+
+# Subsystem 2: Planetary Agent Registry (Canonical URNs, Promotion Engine)
+/src/lib/agentRegistryBackend.ts @nicholasbrianbn # LAB_REGISTRAR
+/src/components/PlanetaryCensusTable.tsx @nicholasbrianbn
+
+# Subsystem 3: Repo Indexer & CVE Vulnerability Scanner
+/src/lib/repoIndexerBackend.ts @nicholasbrianbn # SECURITY_AUDITOR
+/src/lib/sovereignRepos.ts @nicholasbrianbn
+
+# Subsystem 4: Governance Enforcement Layer & Z3 SMT Invariants
+/src/lib/governanceEngine.ts @nicholasbrianbn # GOVERNANCE_COUNCIL
+/.github/workflows/governance-rfc-check.yml @nicholasbrianbn
+
+# Subsystem 5: Threat Radar Backend (GPU Telemetry, CUDA Traps, PQC Envelopes)
+/src/lib/threatRadarBackend.ts @nicholasbrianbn # THREAT_DISPATCHER
+/src/components/ThreatRadar.tsx @nicholasbrianbn
+/.github/workflows/threat-radar-automation.yml @nicholasbrianbn
+
+# Planetary Audit Spine & Cryptographic Merkle Ledger
+/src/lib/merkleSpine.ts @nicholasbrianbn # SOVEREIGN_ARCHITECT
+/scripts/replay-verify.ts @nicholasbrianbn

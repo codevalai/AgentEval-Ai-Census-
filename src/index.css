@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  /* Optimize tabular numbers for live tickers */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Google Sign-in button standard styles */
+  .gsi-material-button {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: #131314;
+    background-image: none;
+    border: 1px solid #747775;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #e3e3e3;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Roboto', arial, sans-serif;
+    font-size: 14px;
+    height: 40px;
+    letter-spacing: 0.25px;
+    outline: none;
+    overflow: hidden;
+    padding: 0 12px;
+    position: relative;
+    text-align: center;
+    transition: background-color 0.218s, border-color 0.218s;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: auto;
+  }
+  .gsi-material-button:hover {
+    background-color: #202124;
+    border-color: #8e918f;
+  }
+  .gsi-material-button .gsi-material-button-icon {
+    height: 20px;
+    margin-right: 12px;
+    min-width: 20px;
+    width: 20px;
+  }
+  .gsi-material-button .gsi-material-button-contents {
+    font-weight: 500;
+  }
+}

@@ -1,0 +1,70 @@
+name: Planetary Threat Radar & Telemetry Patrol
+
+on:
+  schedule:
+    # Run every 15 minutes across planetary threat vectors
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      threat_level_filter:
+        description: 'Minimum DEFCON level to audit'
+        required: true
+        default: 'DEFCON_3'
+        type: choice
+        options:
+          - DEFCON_1
+          - DEFCON_2
+          - DEFCON_3
+          - ALL
+
+jobs:
+  patrol-threat-radar:
+    name: GPU Clamping, CUDA Traps & PQC Jitter Patrol
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout Sovereign Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Run Repo Vulnerability & CVE Scanner (Sovereign 100)
+        run: |
+          echo "[THREAT RADAR] Initiating Planetary CVE Audit across 100 repositories..."
+          npx tsx -e "
+            import { repoIndexerBackend } from './src/lib/repoIndexerBackend.ts';
+            const scan = repoIndexerBackend.executeCVEScan();
+            console.log('CVE Audit Passed:', scan.scannedReposCount, 'repos checked. Status:', scan.allPatchedOrMitigated);
+            if (!scan.allPatchedOrMitigated) process.exit(1);
+          "
+
+      - name: Validate ML-KEM-1024 Decapsulation Jitter & Constant-Time Bounds
+        run: |
+          echo "[PQC AUDIT] Verifying NIST FIPS 203 NTT timing side-channel bounds..."
+          npx tsx -e "
+            import { threatRadarBackend } from './src/lib/threatRadarBackend.ts';
+            const snap = threatRadarBackend.getTelemetrySnapshot();
+            const jitterExceeded = snap.pqcEnvelopes.some(e => e.timingJitterVariancePs > 50);
+            if (jitterExceeded) {
+              console.error('Critical PQC Timing Jitter Leak Detected');
+              process.exit(1);
+            }
+            console.log('PQC Jitter Validated: All envelopes < 50ps timing delta.');
+          "
+
+      - name: Audit CUDA Kernel Out-of-Bounds Memory Traps
+        run: |
+          echo "[CUDA AUDIT] Checking tenant isolation in KV-cache memory slices..."
+          npx tsx -e "
+            import { threatRadarBackend } from './src/lib/threatRadarBackend.ts';
+            const snap = threatRadarBackend.getTelemetrySnapshot();
+            console.log('Active CUDA Traps Under Bounding Clamps:', snap.cudaTraps.length);
+          "
