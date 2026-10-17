@@ -23,7 +23,7 @@ jobs:
           node-version: '22'
 
       - name: Install Dependencies
-        run: npm install --no-audit --no-fund --legacy-peer-deps
+        run: npm install --no-save --no-audit --no-fund --legacy-peer-deps tsx
 
       - name: Run Formal Verification on Pull Request Delta
         run: |
