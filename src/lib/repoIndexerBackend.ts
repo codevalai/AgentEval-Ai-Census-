@@ -56,6 +56,10 @@ const SAMPLE_CVES: RepoCVERecord[] = [
 class RepoIndexerBackendManager {
   private cveRecords: RepoCVERecord[] = [...SAMPLE_CVES];
 
+  public getRepos(): Sovereign100Item[] {
+    return [...SOVEREIGN_100_REPOS];
+  }
+
   public getCVERecords(): RepoCVERecord[] {
     return [...this.cveRecords];
   }
@@ -97,29 +101,35 @@ class RepoIndexerBackendManager {
     totalVulnerabilitiesFound: number;
     criticalCount: number;
     highCount: number;
+    allPatchedOrMitigated: boolean;
     merkleProof: string;
     timestamp: string;
   } {
     const totalRepos = SOVEREIGN_100_REPOS.length;
     const criticalCount = this.cveRecords.filter((c) => c.severity === 'CRITICAL').length;
     const highCount = this.cveRecords.filter((c) => c.severity === 'HIGH').length;
+    const allPatchedOrMitigated = this.cveRecords.every(
+      (c) => c.status === 'PATCHED' || c.status === 'MITIGATED'
+    );
 
     const { leafHash } = generateMerkleLeaf('REPO_CVE_SCAN_EXECUTED', 'GLOBAL_100', {
       totalRepos,
       cves: this.cveRecords.length,
       criticalCount,
+      allPatchedOrMitigated,
     });
 
     sovereignAuditSpine.appendBlock(
       'REPO_CVE_AUDIT_COMPLETED',
       'ContinuousCVEScanner',
       'Global Codebase Indexer',
-      { totalRepos, criticalCount, leafHash }
+      { totalRepos, criticalCount, allPatchedOrMitigated, leafHash }
     );
 
     sovereignEventFabric.publish('REPO_CVE_AUDIT_COMPLETED', 'RepoIndexerBackend', {
       scannedRepos: totalRepos,
       criticalCount,
+      allPatchedOrMitigated,
       merkleLeaf: leafHash,
     });
 
@@ -128,6 +138,7 @@ class RepoIndexerBackendManager {
       totalVulnerabilitiesFound: this.cveRecords.length,
       criticalCount,
       highCount,
+      allPatchedOrMitigated,
       merkleProof: leafHash,
       timestamp: new Date().toLocaleTimeString(),
     };

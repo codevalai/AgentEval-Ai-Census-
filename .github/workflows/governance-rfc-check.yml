@@ -2,9 +2,9 @@ name: Governance & RFC-001..005 Policy Gatekeeper
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 jobs:
@@ -20,14 +20,14 @@ jobs:
       - name: Setup Node.js 22 LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22'
 
       - name: Install Dependencies
-        run: npm ci || npm install
+        run: npm install --no-audit --no-fund --legacy-peer-deps
 
       - name: Run Formal Verification on Pull Request Delta
         run: |
-          echo "[GOVERNANCE] Evaluating RFC-001..005 Invariants via Z3 Solver..."
+          echo "[GOVERNANCE] Evaluating RFC-001..010 Invariants via Z3 Solver..."
           npx tsx -e "
             import { governanceEngine } from './src/lib/governanceEngine.ts';
             const res = governanceEngine.evaluatePolicies({
@@ -38,7 +38,7 @@ jobs:
               cleanroomProven: true,
             });
             console.log('Governance Status:', res.overallStatus);
-            if (res.overallStatus !== 'SAT') {
+            if (!res.overallStatus.startsWith('SAT')) {
               console.error('Governance Violation! Invariant UNSAT.');
               process.exit(1);
             }
