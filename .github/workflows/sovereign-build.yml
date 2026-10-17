@@ -35,13 +35,13 @@ jobs:
           node-version: '22'
 
       - name: Install Dependencies
-        run: rm -f bun.lock package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps || npm install --no-save --no-audit --no-fund --legacy-peer-deps tsx
+        run: rm -f bun.lock package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps
 
       - name: Typecheck & Lint Core Codebase
-        run: npm run lint || echo "Typecheck completed with warnings"
+        run: npm run lint
 
       - name: Production Vite Build
-        run: npm run build || (mkdir -p dist && echo "<!doctype html><html><body>Sovereign CI Build Artifact</body></html>" > dist/index.html)
+        run: npm run build
 
       - name: Execute Deterministic Merkle Replay Verifier
         run: npx tsx scripts/replay-verify.ts

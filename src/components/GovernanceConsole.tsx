@@ -104,14 +104,14 @@ export const GovernanceConsole: React.FC<GovernanceConsoleProps> = ({ theme }) =
     setIsRunningProver(false);
 
     const head = sovereignAuditSpine.getHead();
-    sovereignEventFabric.publish({
-      topic: 'INVARIANT_Z3_SAT_VERIFIED',
-      actor: 'Z3-SMT-Prover-v4.12',
-      payload: {
+    sovereignEventFabric.publish(
+      'INVARIANT_Z3_SAT_VERIFIED',
+      'Z3-SMT-Prover-v4.12',
+      {
         detail: 'z3_check_sat_assuming --invariant="RFC-001..005" --max-slice=65536 → SAT (0 drift)',
         leafHash: head.leafHash,
-      },
-    });
+      }
+    );
   };
 
   const triggerLatticeKeyRotation = async () => {
@@ -135,14 +135,14 @@ export const GovernanceConsole: React.FC<GovernanceConsoleProps> = ({ theme }) =
     setLatticeReport(report);
     setIsRotatingKeys(false);
 
-    sovereignEventFabric.publish({
-      topic: 'DEFENSE_LATTICE_KEY_ROTATION',
-      actor: 'ML-KEM-1024-Ingress-Mesh',
-      payload: {
+    sovereignEventFabric.publish(
+      'DEFENSE_LATTICE_KEY_ROTATION',
+      'ML-KEM-1024-Ingress-Mesh',
+      {
         detail: `Rotated ML-KEM-1024 keys across 20 megasite ingress endpoints (${report.meanRotationLatencyMs}ms, ±${report.maxTimingVarianceNs}ns jitter)`,
         leafHash: report.kyberPublicKeyDigest.slice(0, 12),
-      },
-    });
+      }
+    );
   };
 
   return (

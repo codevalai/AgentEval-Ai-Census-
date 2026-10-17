@@ -84,14 +84,14 @@ export const DeterministicReplayConsole: React.FC<DeterministicReplayConsoleProp
 
   const handleCommitEpochWitness = () => {
     const ssot = censusSSOT.getSnapshot();
-    sovereignEventFabric.publish({
-      topic: 'INVARIANT_EPOCH_WITNESS_COMMIT',
-      actor: 'Monotonic-Merkle-Spine',
-      payload: {
+    sovereignEventFabric.publish(
+      'INVARIANT_EPOCH_WITNESS_COMMIT',
+      'Monotonic-Merkle-Spine',
+      {
         detail: `Epoch witness locked for ${ssot.activeAgents.toLocaleString()} Active / ${ssot.totalCombinedVerified.toLocaleString()} Combined`,
         leafHash: calculateHash(`LEAF:${Date.now()}:${ssot.activeAgents}`).slice(0, 10),
-      },
-    });
+      }
+    );
 
     const newHead = sovereignAuditSpine.getHead();
     const token = calculateHash(

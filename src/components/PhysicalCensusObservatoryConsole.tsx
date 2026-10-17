@@ -223,10 +223,10 @@ export const PhysicalCensusObservatoryConsole: React.FC<PhysicalCensusObservator
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          spiffeId: created.spiffeId,
+          spiffeId: created.agentId,
           canonicalName: created.canonicalName,
           ecosystem: created.ecosystem,
-          agentType: created.agentType,
+          agentType: created.type,
           status: created.status,
           sourceOrigin: created.sourceOrigin,
           svidFingerprint: created.svidFingerprint,
