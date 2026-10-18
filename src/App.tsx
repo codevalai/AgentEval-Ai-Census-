@@ -49,6 +49,7 @@ import { BareMetalSystemsConsole } from './components/BareMetalSystemsConsole.ts
 import { Planetary75PercentCensusConsole } from './components/Planetary75PercentCensusConsole.tsx';
 import { SyntropicCivilizationConsole } from './components/SyntropicCivilizationConsole.tsx';
 import { ExascaleSubAtomicConsole } from './components/ExascaleSubAtomicConsole.tsx';
+import { WorldwideWebAccuracyConsole } from './components/WorldwideWebAccuracyConsole.tsx';
 import {
   INITIAL_STATS,
   INITIAL_REGIONS,
@@ -446,6 +447,9 @@ export default function App() {
 
         {/* Dual Horizon Panels: Today vs This Year */}
         <HorizonPanels stats={stats} theme={theme} />
+
+        {/* WWO-1.0: Worldwide Web Live AI Platform Triangulation & Bayesian Accuracy Engine */}
+        <WorldwideWebAccuracyConsole stats={stats} theme={theme} />
 
         {/* Maximum Live Civilization: Global AI Civilization Live Census (10 Master Platforms) */}
         <GlobalCivilizationDashboard

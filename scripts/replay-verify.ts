@@ -18,6 +18,7 @@ import { threatRadarBackend } from '../src/lib/threatRadarBackend.ts';
 import { repoIndexerBackend } from '../src/lib/repoIndexerBackend.ts';
 import { censusSSOT, partitionExactSSOT } from '../src/lib/censusSSOT.ts';
 import { getTaxonomySummary } from '../src/data/swarmTaxonomy76.ts';
+import { worldwideWebAccuracyEngine } from '../src/services/worldwideWebAccuracyEngine.ts';
 
 async function main() {
   console.log('===========================================================');
@@ -44,12 +45,18 @@ async function main() {
     process.exit(1);
   }
 
-  // 2. 7-Dimension Zero-Drift SSOT Mathematical Audit + BigInt Euclidean Partition Test
-  console.log('\n[SSOT] Auditing 7-Dimension Zero-Drift Mathematical Identity...');
+  // 2. 8-Dimension Zero-Drift SSOT Mathematical Audit + BigInt Euclidean Partition + WWO-1.0 Kalman Test
+  console.log('\n[SSOT] Auditing 8-Dimension Zero-Drift Mathematical Identity & WWO-1.0 Web Triangulation...');
   const ssotAudit = censusSSOT.verifyZeroDriftMathematicalAudit();
   const taxonomyAudit = getTaxonomySummary(ssotAudit.activeTarget, ssotAudit.combinedTarget);
   const taxonomyDomainsSum = taxonomyAudit.domains.reduce((a, d) => a + (d.verifiedAgents || 0), 0);
   const taxonomyDrift = taxonomyDomainsSum - ssotAudit.activeTarget;
+
+  // Verify 24 Global Web AI Platforms & 5-Vector Kalman Triangulation
+  const webPlatforms24 = worldwideWebAccuracyEngine.getReconciled24WebPlatforms(ssotAudit.activeTarget);
+  const webPlatforms24Sum = webPlatforms24.reduce((a, p) => a + p.liveActiveAgents, 0);
+  const webPlatforms24Drift = webPlatforms24Sum - ssotAudit.activeTarget;
+  const kalmanTriangulation = worldwideWebAccuracyEngine.computeChapmanKalmanTriangulation(ssotAudit.activeTarget);
 
   // Verify partitionExactSSOT BigInt Euclidean remainder invariant
   const exactTiersBigInt = partitionExactSSOT(342892410000n, [6748, 2392, 759, 101]);
@@ -62,20 +69,22 @@ async function main() {
   console.log(`  - Unindexed Dark Matter (28.1%): ${ssotAudit.darkMatterTarget.toLocaleString()}`);
   console.log(`  - Planetary Ceiling (100.0%):  ${ssotAudit.ceilingTarget.toLocaleString()}`);
   console.log(`  - 10 Master Platforms Sum:     ${ssotAudit.platformsSum.toLocaleString()} (DRIFT: ${ssotAudit.platformsSum - ssotAudit.activeTarget})`);
+  console.log(`  - 24 Web AI Platforms Sum:     ${webPlatforms24Sum.toLocaleString()} (DRIFT: ${webPlatforms24Drift})`);
   console.log(`  - 4 Capability Tiers Sum:      ${ssotAudit.tiersSum.toLocaleString()} (DRIFT: ${ssotAudit.tiersSum - ssotAudit.activeTarget})`);
   console.log(`  - 20 Regional Megasites Sum:   ${ssotAudit.regionsSum.toLocaleString()} (DRIFT: ${ssotAudit.regionsSum - ssotAudit.activeTarget})`);
   console.log(`  - 76 Taxonomy Domains Sum:     ${taxonomyDomainsSum.toLocaleString()} (DRIFT: ${taxonomyDrift})`);
   console.log(`  - Dark Matter 4↔5 Bijection:   ${ssotAudit.darkMatter4ZoneSum.toLocaleString()} === ${ssotAudit.darkMatter5SliceSum.toLocaleString()} (DRIFT: ${ssotAudit.darkMatter4ZoneSum - ssotAudit.darkMatter5SliceSum})`);
   console.log(`  - BigInt partitionExactSSOT:   ${bigIntSum.toString()} (DRIFT: ${bigIntDrift})`);
+  console.log(`  - WWO-1.0 Kalman Accuracy:     ${kalmanTriangulation.kalmanConfidenceScorePct}% (±${kalmanTriangulation.kalmanFusedSigmaPct}% Fused 95% CI)`);
   console.log(
     `[SSOT] Multi-Dimensional Accounting Identity: ${
-      ssotAudit.isZeroDrift && taxonomyDrift === 0 && bigIntDrift === 0
+      ssotAudit.isZeroDrift && taxonomyDrift === 0 && bigIntDrift === 0 && webPlatforms24Drift === 0
         ? 'SAT (ZERO DRIFT)'
         : 'UNSAT (DRIFT DETECTED)'
     }`
   );
 
-  if (!ssotAudit.isZeroDrift || taxonomyDrift !== 0 || bigIntDrift !== 0) {
+  if (!ssotAudit.isZeroDrift || taxonomyDrift !== 0 || bigIntDrift !== 0 || webPlatforms24Drift !== 0) {
     console.error('CRITICAL: SSOT multi-dimensional accounting drift detected!');
     process.exit(1);
   }

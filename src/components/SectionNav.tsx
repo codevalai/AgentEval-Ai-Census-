@@ -20,6 +20,7 @@ export const SectionNav: React.FC<SectionNavProps> = ({
   const [navMode, setNavMode] = useState<'pillars' | 'taxonomy'>('pillars');
 
   const coreSections = [
+    { id: 'worldwide-web-accuracy-console', label: '🌐 WWO-1.0: Worldwide Web Live AI Triangulation (21 Live APIs • 24 Web Platforms • ±0.42% Kalman CI)', highlight: true },
     { id: 'exascale-subatomic-console', label: '⚛️ Phase 7: AMSPE-1.0 (1T Verkle Directory • Loihi 2 4.2pJ • Qiskit-Aer • DTN Mars)', highlight: true },
     { id: 'syntropic-civilization-console', label: '🔥 Phase 6: Syntropic Civilization Core (Landauer Grid • Lean 4 • seL4 • Photonic WDM)', highlight: true },
     { id: 'planetary-75-census-console', label: '📡 3-Tier Coverage & Dark Matter Boundary (814.37B Indexed [71.9%] • 318.00B Dark [28.1%] • 1.132T Ceiling)', highlight: true },
