@@ -190,51 +190,51 @@ export const DiamondEvaluationConsole: React.FC<DiamondEvaluationConsoleProps> =
           <div className="p-3.5 rounded-xl bg-black/30 border border-white/10">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">
-                1. Real-World Civilization
+                1. Active &amp; Latent Indexed (SSOT)
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
-                Deployments
+                71.9% Coverage
               </span>
             </div>
             <div className="text-xl font-bold font-mono text-white mt-1 tabular-nums">
-              342,892,410,000+
+              814,373,000,000
             </div>
             <div className="text-[11px] text-gray-400 mt-0.5 font-mono">
-              +471.48B Latent (814.37B Combined) • ~1.48T Daily Ephemeral
+              342.89B Active Concurrent + 471.48B Latent Blueprints
             </div>
           </div>
 
           <div className="p-3.5 rounded-xl bg-black/30 border border-white/10">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wide">
-                2. Synthetic Universe Civilization
+                2. Synthetic &amp; Dark Matter Stratum
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">
-                Sim &amp; Game Worlds
+                28.1% Unindexed + Sim
               </span>
             </div>
             <div className="text-xl font-bold font-mono text-white mt-1 tabular-nums">
-              {syntheticSummary.totalSyntheticAgentsM.toLocaleString()} Million
+              318,000,000,000
             </div>
             <div className="text-[11px] text-gray-400 mt-0.5 font-mono">
-              ~{(syntheticSummary.totalDailySyntheticEventsM / 1000).toFixed(1)}B Daily Sim Episode Steps
+              318.00B Dark Matter + {(syntheticSummary.totalSyntheticAgentsM / 1000).toFixed(2)}B Sim Worlds (~{(syntheticSummary.totalDailySyntheticEventsM / 1000).toFixed(1)}B steps/d)
             </div>
           </div>
 
           <div className="p-3.5 rounded-xl bg-black/30 border border-white/10">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-purple-400 uppercase tracking-wide">
-                Total Combined Civilization
+                3. Total Planetary Ceiling (SSOT)
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">
-                Civilization Footprint
+                100.0% Bound
               </span>
             </div>
             <div className="text-xl font-bold font-mono text-white mt-1 tabular-nums">
-              7,360,000,000+
+              1,132,373,000,000
             </div>
             <div className="text-[11px] text-gray-400 mt-0.5 font-mono">
-              21.2+ Billion Daily Agent Interactions
+              1.132T Persistent + Warm • 1.48T/day Ephemeral Invocations
             </div>
           </div>
         </div>

@@ -10,8 +10,8 @@ export interface SwarmTaxonomyDomain {
   layer: 'I_STRUCTURAL' | 'II_GOVERNANCE' | 'III_BEHAVIOR' | 'IV_DATA_INFRA' | 'V_RESEARCH';
   layerTitle: string;
   sectionTargetId?: string;
-  estimatedAgents: number; // in millions (reconciled to 8,422.2M macro total)
-  verifiedAgents?: number; // verified instrumented agents (reconciled to 142,892 total)
+  estimatedAgents: number; // in millions (reconciled to 814,373.0M combined active+latent SSOT total)
+  verifiedAgents?: number; // verified active concurrent agents (reconciled to 342,892,410,000 SSOT total)
   growthRatePerSec: number;
   complianceLevel: string; // e.g. "RFC-001 PASS"
   primaryEcosystem: string;
@@ -1220,11 +1220,18 @@ function distributeTaxonomyExact(baseValues: number[], targetTotal: number): num
 })();
 
 // Helper to calculate total taxonomy metrics (supports live dynamic activeAgentsTotal with zero drift across all 76 cards)
-export function getTaxonomySummary(liveActiveAgents: number = 342892410000) {
+export function getTaxonomySummary(
+  liveActiveAgents: number = 342892410000,
+  liveCombinedAgents?: number
+) {
   const totalDomains = SWARM_TAXONOMY_DOMAINS.length;
   const activeDelta = Math.max(0, Math.round(liveActiveAgents - 342892410000));
   const latentDelta = Math.round(activeDelta * 1.375);
-  const liveCombinedMil = parseFloat(((814373000000 + activeDelta + latentDelta) / 1e6).toFixed(1));
+  const combinedTotal =
+    typeof liveCombinedAgents === 'number'
+      ? liveCombinedAgents
+      : 814373000000 + activeDelta + latentDelta;
+  const liveCombinedMil = parseFloat((combinedTotal / 1e6).toFixed(1));
 
   const baseVerified = SWARM_TAXONOMY_DOMAINS.map((d) => d.verifiedAgents || 0);
   const liveVerifiedPerDomain = distributeTaxonomyExact(baseVerified, liveActiveAgents);

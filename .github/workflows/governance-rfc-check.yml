@@ -7,6 +7,10 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   rfc-governance-eval:
     name: OPA/Rego Policies & Z3 SMT-LIB2 Solver Validation
@@ -23,30 +27,7 @@ jobs:
           node-version: '22'
 
       - name: Install Dependencies
-        run: npm install --no-save --no-audit --no-fund --legacy-peer-deps tsx
+        run: rm -f bun.lock package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps
 
-      - name: Run Formal Verification on Pull Request Delta
-        run: |
-          echo "[GOVERNANCE] Evaluating RFC-001..010 Invariants via Z3 Solver..."
-          npx tsx -e "
-            import { governanceEngine } from './src/lib/governanceEngine.ts';
-            const res = governanceEngine.evaluatePolicies({
-              name: 'PR-Merge-Candidate',
-              bftQuorum: 85.0,
-              memoryAllocatedKb: 64.0,
-              cipherSuite: 'ML-KEM-1024',
-              cleanroomProven: true,
-            });
-            console.log('Governance Status:', res.overallStatus);
-            if (!res.overallStatus.startsWith('SAT')) {
-              console.error('Governance Violation! Invariant UNSAT.');
-              process.exit(1);
-            }
-          "
-
-      - name: Verify RBAC Role Constraints on Modified Files
-        run: |
-          echo "[RBAC CHECK] Enforcing CODEOWNERS and Role boundaries:"
-          echo "  - CENSUS_OPERATOR: src/lib/ingestionBackbone.ts"
-          echo "  - LAB_REGISTRAR: src/lib/agentRegistryBackend.ts"
-          echo "  - THREAT_DISPATCHER: src/lib/threatRadarBackend.ts"
+      - name: Run Formal Z3 SMT-LIB2 & Zero-Drift SSOT Verification
+        run: npx tsx scripts/governance-rfc-verify.ts

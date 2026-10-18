@@ -43,7 +43,7 @@ jobs:
       - name: Production Vite Build
         run: npm run build
 
-      - name: Execute Deterministic Merkle Replay Verifier
+      - name: Execute Deterministic Merkle Replay & 7-Dimension SSOT Verifier
         run: npx tsx scripts/replay-verify.ts
 
       - name: Generate Sigstore Cosign Attestation

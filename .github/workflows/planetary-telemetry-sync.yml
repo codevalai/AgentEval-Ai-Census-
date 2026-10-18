@@ -1,6 +1,8 @@
 name: Planetary Telemetry & Merkle Spine Sink
 
 on:
+  push:
+    branches: [ "main", "master" ]
   schedule:
     # Hourly export to repository telemetry ledger
     - cron: '0 * * * *'
@@ -11,6 +13,10 @@ on:
         required: false
         default: 'false'
         type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   telemetry-export:
@@ -28,35 +34,10 @@ jobs:
           node-version: '22'
 
       - name: Install Dependencies
-        run: npm install --no-save --no-audit --no-fund --legacy-peer-deps tsx
+        run: rm -f bun.lock package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps
 
-      - name: Export Planetary Census Snapshot to JSON
-        run: |
-          mkdir -p data/telemetry
-          npx tsx -e "
-            import fs from 'fs';
-            import { sovereignAuditSpine } from './src/lib/merkleSpine.ts';
-            import { repoIndexerBackend } from './src/lib/repoIndexerBackend.ts';
-            import { threatRadarBackend } from './src/lib/threatRadarBackend.ts';
-            import { INITIAL_STATS } from './src/data/initialData.ts';
-
-            const payload = {
-              exportedAt: new Date().toISOString(),
-              censusScale: {
-                activeConcurrent: INITIAL_STATS.totalActiveAgents,
-                latentBlueprintsAndStaged: INITIAL_STATS.latentAgents,
-                combinedIndexed: INITIAL_STATS.totalActiveAgents + INITIAL_STATS.latentAgents,
-                darkMatterUnindexed: 318000000000,
-                planetaryCeiling: 1132373000000,
-              },
-              spineHead: sovereignAuditSpine.getHead(),
-              threatSnapshot: threatRadarBackend.getTelemetrySnapshot(),
-              sovereign100Count: repoIndexerBackend.getRepos().length,
-              rfcStandard: 'RFC-001..010-COMPLIANT',
-            };
-            fs.writeFileSync('data/telemetry/census-snapshot-latest.json', JSON.stringify(payload, null, 2));
-            console.log('Telemetry bundle exported successfully to data/telemetry/census-snapshot-latest.json');
-          "
+      - name: Export Planetary Census Snapshot & Epoch Witness to JSON
+        run: npx tsx scripts/telemetry-sync-export.ts
 
       - name: Upload Telemetry Bundle Artifact
         uses: actions/upload-artifact@v4

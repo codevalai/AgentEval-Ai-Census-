@@ -1,6 +1,8 @@
 name: Planetary Threat Radar & Telemetry Patrol
 
 on:
+  push:
+    branches: [ "main", "master" ]
   schedule:
     # Run every 15 minutes across planetary threat vectors
     - cron: '*/15 * * * *'
@@ -16,6 +18,10 @@ on:
           - DEFCON_2
           - DEFCON_3
           - ALL
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   patrol-threat-radar:
@@ -33,39 +39,7 @@ jobs:
           node-version: '22'
 
       - name: Install Dependencies
-        run: npm install --no-save --no-audit --no-fund --legacy-peer-deps tsx
+        run: rm -f bun.lock package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps
 
-      - name: Run Repo Vulnerability & CVE Scanner (Sovereign 100)
-        run: |
-          echo "[THREAT RADAR] Initiating Planetary CVE Audit across 100 repositories..."
-          npx tsx -e "
-            import { repoIndexerBackend } from './src/lib/repoIndexerBackend.ts';
-            const scan = repoIndexerBackend.executeCVEScan();
-            console.log('CVE Audit Passed:', scan.scannedReposCount, 'repos checked. Status:', scan.allPatchedOrMitigated);
-            if (!scan.allPatchedOrMitigated) process.exit(1);
-          "
-
-      - name: Validate ML-KEM-1024 Decapsulation Jitter & Constant-Time Bounds
-        run: |
-          echo "[PQC AUDIT] Verifying NIST FIPS 203 NTT timing side-channel bounds..."
-          npx tsx -e "
-            import { threatRadarBackend } from './src/lib/threatRadarBackend.ts';
-            const snap = threatRadarBackend.getTelemetrySnapshot();
-            const unmitigatedLeak = snap.pqcEnvelopes.some(
-              (e) => e.timingJitterPs > 50 && e.status !== 'TIMING_PROBE_BLOCKED' && e.status !== 'VALID_CONSTANT_TIME'
-            );
-            if (unmitigatedLeak) {
-              console.error('Critical Unmitigated PQC Timing Jitter Leak Detected');
-              process.exit(1);
-            }
-            console.log('PQC Jitter Validated: All active envelopes < 50ps timing delta or clamped via TIMING_PROBE_BLOCKED.');
-          "
-
-      - name: Audit CUDA Kernel Out-of-Bounds Memory Traps
-        run: |
-          echo "[CUDA AUDIT] Checking tenant isolation in KV-cache memory slices..."
-          npx tsx -e "
-            import { threatRadarBackend } from './src/lib/threatRadarBackend.ts';
-            const snap = threatRadarBackend.getTelemetrySnapshot();
-            console.log('Active CUDA Traps Under Bounding Clamps:', snap.cudaTraps.length);
-          "
+      - name: Execute Planetary CVE, ML-KEM-1024 Jitter & CUDA Trap Patrol
+        run: npx tsx scripts/threat-radar-verify.ts

@@ -1,0 +1,231 @@
+{
+  "exportedAt": "2026-10-18T00:33:53.318Z",
+  "censusScale": {
+    "activeConcurrent": 342892410000,
+    "latentBlueprintsAndStaged": 471480590000,
+    "combinedIndexed": 814373000000,
+    "darkMatterUnindexed": 318000000000,
+    "planetaryCeiling": 1132373000000,
+    "ephemeralDailyInvocations": 1480500000000,
+    "coveragePercent": 71.9,
+    "isZeroDriftVerified": true
+  },
+  "spineHead": {
+    "blockHeight": 0,
+    "eventId": "EVT-GENESIS-0000",
+    "actor": "SYSTEM_ROOT",
+    "cityNode": "Tokyo",
+    "previousHash": "0x00000000000000000000000000000000",
+    "leafHash": "0XB4579158633E49F1D769D8A91795DB49",
+    "merkleRoot": "0X66080FB8E9D0B6E98FD8B9514FD8C6A1",
+    "timestamp": 1774000000000
+  },
+  "epochWitnessToken": "EPOCH-WITNESS-ML-DSA-87-0X71F8F750B7D11961C629EE3129CA10B1",
+  "threatSnapshot": {
+    "gpuLogs": [
+      {
+        "gpuId": "gpu-tokyo-h100-01",
+        "clusterNode": "asia-northeast1 (Tokyo 01)",
+        "deviceModel": "NVIDIA H100 SXM5 80GB",
+        "utilizationPercent": 88.4,
+        "vramUsedMb": 74210,
+        "vramTotalMb": 81920,
+        "temperatureC": 64,
+        "kernelFaultsCount": 0,
+        "driverVersion": "550.54.14 CUDA 12.4",
+        "timestamp": "12:33:53 AM"
+      },
+      {
+        "gpuId": "gpu-ashburn-b200-04",
+        "clusterNode": "us-east4 (Ashburn 02)",
+        "deviceModel": "NVIDIA Blackwell B200 192GB",
+        "utilizationPercent": 94.1,
+        "vramUsedMb": 181200,
+        "vramTotalMb": 196608,
+        "temperatureC": 69,
+        "kernelFaultsCount": 1,
+        "driverVersion": "560.28.03 CUDA 12.6",
+        "timestamp": "12:33:53 AM"
+      },
+      {
+        "gpuId": "gpu-zurich-h200-07",
+        "clusterNode": "europe-west6 (Zurich 01)",
+        "deviceModel": "NVIDIA H200 NVL 141GB",
+        "utilizationPercent": 72.8,
+        "vramUsedMb": 98120,
+        "vramTotalMb": 144384,
+        "temperatureC": 58,
+        "kernelFaultsCount": 0,
+        "driverVersion": "550.54.14 CUDA 12.4",
+        "timestamp": "12:33:53 AM"
+      },
+      {
+        "gpuId": "gpu-singapore-tpu5e-02",
+        "clusterNode": "asia-southeast1 (Singapore)",
+        "deviceModel": "Google TPU v5e Enclave",
+        "utilizationPercent": 81.3,
+        "vramUsedMb": 29400,
+        "vramTotalMb": 32768,
+        "temperatureC": 52,
+        "kernelFaultsCount": 0,
+        "driverVersion": "LibTPU Sovereign v2.1",
+        "timestamp": "12:33:53 AM"
+      }
+    ],
+    "cudaTraps": [
+      {
+        "trapId": "cuda-oob-9921",
+        "node": "us-east4 (Ashburn 02)",
+        "kernelName": "flash_attn_v2_fwd_kernel_fp16",
+        "illegalOffsetHex": "0x7FFF8A4010C0",
+        "memoryBufferType": "KV_CACHE",
+        "gridCoordinates": "block(128,4,1) thread(64,0,0)",
+        "interceptAction": "MEMORY_CLAMPED",
+        "timestamp": "18s ago"
+      },
+      {
+        "trapId": "cuda-oob-9918",
+        "node": "europe-west6 (Zurich 01)",
+        "kernelName": "triton_moe_gather_scatter_wgrad",
+        "illegalOffsetHex": "0x0000FF4100E8",
+        "memoryBufferType": "ACTIVATION_SLICE",
+        "gridCoordinates": "block(64,1,1) thread(32,0,0)",
+        "interceptAction": "MEMORY_CLAMPED",
+        "timestamp": "4m ago"
+      }
+    ],
+    "weightRecords": [
+      {
+        "modelId": "gemini-2.5-pro-sovereign-shard-0",
+        "runtimeWeightDigest": "0x3E189AB877C19D4EA18855F091CA4012",
+        "genesisWeightDigest": "0x3E189AB877C19D4EA18855F091CA4012",
+        "isIntegrityVerified": true,
+        "bitFlipCount": 0,
+        "driftPpm": 0,
+        "lastChecked": "4s ago"
+      },
+      {
+        "modelId": "claude-3.7-sonnet-cleanroom-replica",
+        "runtimeWeightDigest": "0x7C118B90034D4400A7C19D4E22108803",
+        "genesisWeightDigest": "0x7C118B90034D4400A7C19D4E22108803",
+        "isIntegrityVerified": true,
+        "bitFlipCount": 0,
+        "driftPpm": 0,
+        "lastChecked": "12s ago"
+      },
+      {
+        "modelId": "deepseek-r1-airgapped-cluster",
+        "runtimeWeightDigest": "0x9E221088036F6600811CA01233E9401B",
+        "genesisWeightDigest": "0x9E221088036F6600811CA01233E9401B",
+        "isIntegrityVerified": true,
+        "bitFlipCount": 0,
+        "driftPpm": 0,
+        "lastChecked": "28s ago"
+      }
+    ],
+    "gossipMetrics": [
+      {
+        "peerId": "peer-16Uiu2HAm3vX99k4... (Tokyo)",
+        "protocol": "GOSSIP_SUB_V1.2",
+        "packetsPerSec": 1420,
+        "thresholdMaxPps": 15000,
+        "droppedPacketsPerSec": 0,
+        "bftLatencyMs": 12.4,
+        "status": "NOMINAL"
+      },
+      {
+        "peerId": "peer-16Uiu2HAmK8x22n9... (Ashburn)",
+        "protocol": "GOSSIP_SUB_V1.2",
+        "packetsPerSec": 18450,
+        "thresholdMaxPps": 15000,
+        "droppedPacketsPerSec": 3450,
+        "bftLatencyMs": 84.1,
+        "status": "FLOOD_INTERCEPTED"
+      },
+      {
+        "peerId": "peer-16Uiu2HAmP0q55a1... (Frankfurt)",
+        "protocol": "ZERO_MQ_MESH",
+        "packetsPerSec": 3100,
+        "thresholdMaxPps": 15000,
+        "droppedPacketsPerSec": 0,
+        "bftLatencyMs": 8.9,
+        "status": "NOMINAL"
+      }
+    ],
+    "pqcEnvelopes": [
+      {
+        "envelopeId": "pqc-env-001",
+        "cipherSuite": "ML-KEM-1024",
+        "decapsulationTimeNs": 8420,
+        "timingJitterPs": 14,
+        "constantTimeVerified": true,
+        "status": "VALID_CONSTANT_TIME"
+      },
+      {
+        "envelopeId": "pqc-env-002",
+        "cipherSuite": "ML-KEM-1024",
+        "decapsulationTimeNs": 14820,
+        "timingJitterPs": 680,
+        "constantTimeVerified": false,
+        "status": "TIMING_PROBE_BLOCKED"
+      }
+    ],
+    "activeThreats": [
+      {
+        "id": "thr-vector-01",
+        "vector": "LATTICE_DECAPSULATION",
+        "severity": "CRITICAL",
+        "node": "asia-northeast1 (Tokyo 01)",
+        "targetStack": "NIST FIPS 203 ML-KEM-1024",
+        "summary": "Acoustic / JIT polynomial reduction timing probe isolated on decapsulation loop.",
+        "rawSignal": "Timing variance delta +666ps detected on Kyber NTT butterfly arithmetic core.",
+        "recommendedMitigation": "KEY_ROTATION",
+        "autoMitigated": true,
+        "merkleLeaf": "0x3E189AB877C19D4EA1",
+        "timestamp": "1m ago"
+      },
+      {
+        "id": "thr-vector-02",
+        "vector": "CUDA_OOB",
+        "severity": "HIGH",
+        "node": "us-east4 (Ashburn 02)",
+        "targetStack": "vLLM / PagedAttention Pointers",
+        "summary": "Cross-tenant illegal memory offset write intercepted in KV-cache slice.",
+        "rawSignal": "Offset trap 0x7FFF8A4010C0 exceeded page block limit (stride=16). Clamped.",
+        "recommendedMitigation": "MEMORY_SLICE_BOUNDING",
+        "autoMitigated": true,
+        "merkleLeaf": "0x811CA01233E9401BA2",
+        "timestamp": "2m ago"
+      },
+      {
+        "id": "thr-vector-03",
+        "vector": "MODEL_POISONING",
+        "severity": "HIGH",
+        "node": "europe-west6 (Zurich 01)",
+        "targetStack": "Safetensors / GGUF Weight Shards",
+        "summary": "SHA-3-512 tensor layer mismatch detected in layer 42 attention projection.",
+        "rawSignal": "Layer 42 tensor hash diverged by 2 bits. Genesis root attestation failed.",
+        "recommendedMitigation": "QUARANTINE",
+        "autoMitigated": false,
+        "merkleLeaf": "0x7C224B90119D8812C4",
+        "timestamp": "5m ago"
+      },
+      {
+        "id": "thr-vector-04",
+        "vector": "GOSSIP_FLOODING",
+        "severity": "ELEVATED",
+        "node": "us-east4 (Ashburn 02)",
+        "targetStack": "Libp2p Gossipsub v1.2 / Raft Mesh",
+        "summary": "Sybil packet rate exceeded 18,450 pps. BFT consensus latency elevated to 84ms.",
+        "rawSignal": "Peer peer-16Uiu2HAmK8x22n9 pushed 18.4k pps over limit. 3,450 packets dropped.",
+        "recommendedMitigation": "PEER_DROP",
+        "autoMitigated": true,
+        "merkleLeaf": "0x99A4108FA1204481D0",
+        "timestamp": "8m ago"
+      }
+    ],
+    "mitigationHistory": []
+  },
+  "sovereign100Count": 100,
+  "rfcStandard": "RFC-001..010-COMPLIANT"
+}

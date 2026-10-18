@@ -10,7 +10,11 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "test": "tsx scripts/replay-verify.ts",
-    "replay-verify": "tsx scripts/replay-verify.ts"
+    "replay-verify": "tsx scripts/replay-verify.ts",
+    "threat-verify": "tsx scripts/threat-radar-verify.ts",
+    "governance-verify": "tsx scripts/governance-rfc-verify.ts",
+    "telemetry-export": "tsx scripts/telemetry-sync-export.ts",
+    "verify:all": "tsc --noEmit && tsx scripts/replay-verify.ts && tsx scripts/threat-radar-verify.ts && tsx scripts/governance-rfc-verify.ts && tsx scripts/telemetry-sync-export.ts"
   },
   "dependencies": {
     "@google/genai": "*",

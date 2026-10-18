@@ -359,7 +359,95 @@ class UnifiedCensusSSOTEngine {
       listener(current);
     }
   }
+
+  /**
+   * Executes a 7-dimension mathematical audit across the live snapshot to prove Zero Drift (Δ_drift === 0)
+   */
+  public verifyZeroDriftMathematicalAudit(stats?: CensusStats): {
+    isZeroDrift: boolean;
+    activeTarget: number;
+    combinedTarget: number;
+    darkMatterTarget: number;
+    ceilingTarget: number;
+    platformsSum: number;
+    tiersSum: number;
+    regionsSum: number;
+    countriesCombinedSum: number;
+    embodimentsSum: number;
+    darkMatter4ZoneSum: number;
+    darkMatter5SliceSum: number;
+  } {
+    const snap = this.computeSnapshot(stats || this.latestStats);
+    const platformsSum = snap.platforms.reduce((a, p) => a + p.activeAgents, 0);
+    const tiersSum = snap.tiers.reduce((a, t) => a + t.count, 0);
+    const regionsSum = snap.regions.reduce((a, r) => a + r.totalAgents, 0);
+    const countriesCombinedSum = snap.countries.reduce((a, c) => a + c.totalAgents, 0);
+    const embodimentsSum = snap.embodiments.reduce((a, e) => a + e.count, 0);
+    const darkMatter4ZoneSum = DARK_MATTER_4_ZONE_BREAKDOWN.reduce((a, z) => a + z.count, 0);
+    const darkMatter5SliceSum = DARK_MATTER_5_SEGMENT_BIJECTION.reduce((a, s) => a + s.count, 0);
+
+    const isZeroDrift =
+      platformsSum === snap.activeAgents &&
+      tiersSum === snap.activeAgents &&
+      regionsSum === snap.activeAgents &&
+      embodimentsSum === snap.activeAgents &&
+      countriesCombinedSum === snap.totalCombinedVerified &&
+      darkMatter4ZoneSum === snap.darkMatterUnindexedPopulation &&
+      darkMatter5SliceSum === snap.darkMatterUnindexedPopulation &&
+      snap.totalCombinedVerified + snap.darkMatterUnindexedPopulation === snap.totalPlanetaryCeiling;
+
+    return {
+      isZeroDrift,
+      activeTarget: snap.activeAgents,
+      combinedTarget: snap.totalCombinedVerified,
+      darkMatterTarget: snap.darkMatterUnindexedPopulation,
+      ceilingTarget: snap.totalPlanetaryCeiling,
+      platformsSum,
+      tiersSum,
+      regionsSum,
+      countriesCombinedSum,
+      embodimentsSum,
+      darkMatter4ZoneSum,
+      darkMatter5SliceSum,
+    };
+  }
+}
+
+export const DARK_MATTER_4_ZONE_BREAKDOWN = [
+  { id: 'DM-Z1', label: 'Air-Gapped Sovereign Defense, Classified VPCs & Orbital/Subsea', count: 185000000000 },
+  { id: 'DM-Z2', label: 'Anonymous Shadow Swarms, MEV & Unregistered Scrapers', count: 64000000000 },
+  { id: 'DM-Z3', label: 'Uninstrumented Consumer & Industrial Offline Silicon', count: 41000000000 },
+  { id: 'DM-Z4', label: 'Private Financial & Sovereign Enterprise Intranets', count: 28000000000 },
+] as const; // 185B + 64B + 41B + 28B === 318,000,000,000
+
+export const DARK_MATTER_5_SEGMENT_BIJECTION = [
+  { id: 'DM-S1', parentZoneId: 'DM-Z1', label: 'Air-Gapped Sovereign Defense & Classified Enclaves', count: 148000000000 },
+  { id: 'DM-S2', parentZoneId: 'DM-Z1', label: 'Orbital LEO/MEO & Subsea Autonomous Nodes', count: 37000000000 },
+  { id: 'DM-S3', parentZoneId: 'DM-Z2', label: 'Anonymous Shadow Swarms, MEV & Dark-Pool Scrapers', count: 64000000000 },
+  { id: 'DM-S4', parentZoneId: 'DM-Z3', label: 'Uninstrumented Consumer & Industrial Offline Silicon', count: 41000000000 },
+  { id: 'DM-S5', parentZoneId: 'DM-Z4', label: 'Private Financial & Sovereign Enterprise Intranets', count: 28000000000 },
+] as const; // (148B + 37B = 185B) + 64B + 41B + 28B === 318,000,000,000
+
+/**
+ * Deterministic BigInt Euclidean Remainder Partitioner (Zero-Drift Guarantee)
+ * Anchor index [0] absorbs exact Euclidean remainder so sum(result) === totalPool on every tick.
+ */
+export function partitionExactSSOT(
+  totalPool: bigint,
+  weightsBps: readonly number[] // Basis points summing to 10000 (100.00%)
+): bigint[] {
+  const result: bigint[] = new Array(weightsBps.length);
+  let allocated = 0n;
+
+  for (let i = 1; i < weightsBps.length; i++) {
+    const slice = (totalPool * BigInt(weightsBps[i])) / 10000n;
+    result[i] = slice;
+    allocated += slice;
+  }
+  result[0] = totalPool - allocated;
+  return result;
 }
 
 export const censusSSOT = new UnifiedCensusSSOTEngine();
 export { SWARM_TAXONOMY_LAYERS };
+
