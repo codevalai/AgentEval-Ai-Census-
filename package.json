@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@google/genai": "*",
+    "@supabase/supabase-js": "^2.118.0",
     "@tailwindcss/vite": "*",
     "@vis.gl/react-google-maps": "*",
     "@vitejs/plugin-react": "*",
@@ -32,7 +33,8 @@
     "pg": "*",
     "react": "*",
     "react-dom": "*",
-    "vite": "*"
+    "vite": "*",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/express": "*",

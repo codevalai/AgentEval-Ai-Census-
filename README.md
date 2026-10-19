@@ -115,6 +115,21 @@ How does **Sovereign Infinity** achieve verifiable global accuracy across **24 W
 
 ---
 
+## ⚡ Supabase (`wvhjcxxfslzkechhoolz`) & Autonomous Orchestrator Master Build
+
+Linked via `supabase link --project-ref wvhjcxxfslzkechhoolz` (`https://wvhjcxxfslzkechhoolz.supabase.co`), the **Sovereign Infinity AI Census** enforces a 4-part zero-mock persistence and orchestration pipeline:
+
+1. **Part I — Database Migrations & PostgreSQL Schema (`supabase/migrations/20261019000000_sovereign_infinity_census.sql` & `src/db/schema.ts`)**:
+   - Provisions `public.census_agents` (`INITIALIZING` | `ACTIVE` | `SUSPENDED` | `TERMINATED`) and `public.census_telemetry` (`INFO` | `WARN` | `ERROR` | `CRITICAL`) with `uuid-ossp`, `pgcrypto`, high-throughput B-Tree indexes (`idx_telemetry_agent_id`, `idx_telemetry_recorded_at`, `idx_agents_status`), Row-Level Security (RLS) policies, and PL/pgSQL `update_updated_at_column()` triggers.
+2. **Part II — Strict Zod Runtime Validation Schemas (`src/schemas/census.ts`)**:
+   - Enforces `AgentRegistrationSchema` (`agent_name: z.string().min(3).max(100)`, `lifecycle_status`, `metadata`) and `TelemetryPayloadSchema` (`agent_id: z.string().uuid()`, `metric_type`, `payload`, `severity`).
+3. **Part III — Autonomous Orchestration Engine (`src/agents/orchestrator.ts`)**:
+   - `AutonomousOrchestrator` dual-homed with `@supabase/supabase-js` (`eventsPerSecond: 10`, `persistSession: false`) and Drizzle ORM PostgreSQL persistence (`registerAgent`, `logTelemetry`, `updateAgentLifecycleStatus`, `shutdown`).
+4. **Part IV — High-Concurrency Express & Telemetry API (`src/server.ts` & `vite.config.ts`)**:
+   - Exposes `POST /api/agents/register` (`HTTP 201` / `HTTP 400`), `POST /api/telemetry` (`HTTP 202` / `HTTP 422`), `PATCH /api/agents/status`, and `GET /api/census/orchestrator`.
+
+---
+
 ## 🏛️ System Architecture & 7-Phase Planetary Stack
 
 ```text

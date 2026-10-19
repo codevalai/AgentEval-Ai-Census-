@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { index, integer, jsonb, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 // Define the 'users' table linking Firebase Auth UID to relational record
 export const users = pgTable('users', {
@@ -49,6 +49,44 @@ export const agentTelemetryEvents = pgTable('agent_telemetry_events', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+// ============================================================================
+// PART I: SOVEREIGN INFINITY AI CENSUS — SUPABASE / POSTGRESQL MASTER TABLES
+// Reconciled with supabase/migrations/20261019000000_sovereign_infinity_census.sql
+// ============================================================================
+
+// 1. Agent Registries & Lifecycles (public.census_agents)
+export const censusAgents = pgTable(
+  'census_agents',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    agentName: text('agent_name').notNull().unique(),
+    lifecycleStatus: text('lifecycle_status').notNull().default('INITIALIZING'), // 'INITIALIZING' | 'ACTIVE' | 'SUSPENDED' | 'TERMINATED'
+    metadata: jsonb('metadata').$type<Record<string, any>>().default({}).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index('idx_agents_status').on(table.lifecycleStatus)]
+);
+
+// 2. Telemetry & Metric Streams (public.census_telemetry)
+export const censusTelemetry = pgTable(
+  'census_telemetry',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    agentId: uuid('agent_id')
+      .references(() => censusAgents.id, { onDelete: 'cascade' })
+      .notNull(),
+    metricType: text('metric_type').notNull(),
+    payload: jsonb('payload').$type<Record<string, any>>().default({}).notNull(),
+    severity: text('severity').notNull().default('INFO'), // 'INFO' | 'WARN' | 'ERROR' | 'CRITICAL'
+    recordedAt: timestamp('recorded_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('idx_telemetry_agent_id').on(table.agentId),
+    index('idx_telemetry_recorded_at').on(table.recordedAt),
+  ]
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   records: many(workspaceRecords),
 }));
@@ -57,5 +95,16 @@ export const workspaceRecordsRelations = relations(workspaceRecords, ({ one }) =
   user: one(users, {
     fields: [workspaceRecords.userId],
     references: [users.id],
+  }),
+}));
+
+export const censusAgentsRelations = relations(censusAgents, ({ many }) => ({
+  telemetry: many(censusTelemetry),
+}));
+
+export const censusTelemetryRelations = relations(censusTelemetry, ({ one }) => ({
+  agent: one(censusAgents, {
+    fields: [censusTelemetry.agentId],
+    references: [censusAgents.id],
   }),
 }));

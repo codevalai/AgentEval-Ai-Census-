@@ -50,6 +50,7 @@ import { Planetary75PercentCensusConsole } from './components/Planetary75Percent
 import { SyntropicCivilizationConsole } from './components/SyntropicCivilizationConsole.tsx';
 import { ExascaleSubAtomicConsole } from './components/ExascaleSubAtomicConsole.tsx';
 import { WorldwideWebAccuracyConsole } from './components/WorldwideWebAccuracyConsole.tsx';
+import { SupabaseOrchestratorConsole } from './components/SupabaseOrchestratorConsole.tsx';
 import {
   INITIAL_STATS,
   INITIAL_REGIONS,
@@ -450,6 +451,9 @@ export default function App() {
 
         {/* WWO-1.0: Worldwide Web Live AI Platform Triangulation & Bayesian Accuracy Engine */}
         <WorldwideWebAccuracyConsole stats={stats} theme={theme} />
+
+        {/* Sovereign Infinity AI Census: Supabase (wvhjcxxfslzkechhoolz) & Autonomous Orchestrator Master Console */}
+        <SupabaseOrchestratorConsole theme={theme} />
 
         {/* Maximum Live Civilization: Global AI Civilization Live Census (10 Master Platforms) */}
         <GlobalCivilizationDashboard

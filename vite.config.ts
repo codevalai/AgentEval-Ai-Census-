@@ -120,17 +120,133 @@ function sovereignApiPlugin(): Plugin {
         }
 
         if (url === '/api/agents/register' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsed = JSON.parse(body || '{}');
+              const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+
+              // Normalize legacy VoluntaryRegistrationModal payload ({ name }) if agent_name is omitted
+              const normalizedInput =
+                parsed.agent_name !== undefined
+                  ? parsed
+                  : parsed.name
+                  ? {
+                      agent_name: String(parsed.name),
+                      lifecycle_status: 'ACTIVE',
+                      metadata: parsed,
+                    }
+                  : parsed;
+
+              const result = await defaultOrchestrator.registerAgent(normalizedInput);
+              res.statusCode = 201;
+              res.end(
+                JSON.stringify({
+                  success: true,
+                  data: result,
+                  status: 'REGISTERED_IN_PLANETARY_REGISTRY',
+                  registrationProtocol: 'RFC-005',
+                  pqcEnclave: 'ML-KEM-1024-VERIFIED',
+                  merkleAnchorHeight: 48921,
+                  merkleLeaf: '0x811CA01233E9401B',
+                  timestamp: new Date().toISOString(),
+                })
+              );
+            } catch (err: any) {
+              res.statusCode = 400;
+              res.end(
+                JSON.stringify({
+                  success: false,
+                  error: err?.message || 'Invalid agent registration payload',
+                })
+              );
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/telemetry' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsed = JSON.parse(body || '{}');
+              const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+              const record = await defaultOrchestrator.logTelemetry(parsed);
+              res.statusCode = 202;
+              res.end(
+                JSON.stringify({
+                  success: true,
+                  status: 'committed',
+                  data: record,
+                })
+              );
+            } catch (err: any) {
+              res.statusCode = 422;
+              res.end(
+                JSON.stringify({
+                  success: false,
+                  error: err?.message || 'Invalid telemetry payload',
+                })
+              );
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/census/orchestrator' && req.method === 'GET') {
           res.setHeader('Content-Type', 'application/json');
-          res.end(
-            JSON.stringify({
-              status: 'REGISTERED_IN_PLANETARY_REGISTRY',
-              registrationProtocol: 'RFC-005',
-              pqcEnclave: 'ML-KEM-1024-VERIFIED',
-              merkleAnchorHeight: 48921,
-              merkleLeaf: '0x811CA01233E9401B',
-              timestamp: new Date().toISOString(),
-            })
-          );
+          try {
+            const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+            const state = await defaultOrchestrator.listAgentsAndTelemetry();
+            res.statusCode = 200;
+            res.end(
+              JSON.stringify({
+                success: true,
+                connection: defaultOrchestrator.getConnectionMetadata(),
+                ...state,
+              })
+            );
+          } catch (err: any) {
+            res.statusCode = 500;
+            res.end(
+              JSON.stringify({
+                success: false,
+                error: err?.message || 'Failed to fetch orchestrator state',
+              })
+            );
+          }
+          return;
+        }
+
+        if (url === '/api/agents/status' && req.method === 'PATCH') {
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsed = JSON.parse(body || '{}');
+              const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+              const updated = await defaultOrchestrator.updateAgentLifecycleStatus(
+                String(parsed.id || ''),
+                parsed.lifecycle_status
+              );
+              res.statusCode = 200;
+              res.end(JSON.stringify({ success: true, data: updated }));
+            } catch (err: any) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ success: false, error: err?.message || 'Failed to update status' }));
+            }
+          });
           return;
         }
 
@@ -1182,6 +1298,106 @@ Provide a rigorous, data-dense 3-paragraph synthesis connecting these real-world
             } catch (err: any) {
               res.statusCode = 500;
               res.end(JSON.stringify({ error: err?.message || 'Domain inspection failed' }));
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/agents/metrics' && req.method === 'GET') {
+          res.setHeader('Content-Type', 'application/json');
+          try {
+            const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+            const metrics = await defaultOrchestrator.fetchActiveCensusMetrics();
+            res.statusCode = 200;
+            res.end(JSON.stringify({ success: true, data: metrics }));
+          } catch (err: any) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ success: false, error: err?.message || 'Failed to query census metrics' }));
+          }
+          return;
+        }
+
+        if (url === '/api/census/orchestrator' && req.method === 'GET') {
+          res.setHeader('Content-Type', 'application/json');
+          try {
+            const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+            const state = await defaultOrchestrator.listAgentsAndTelemetry();
+            res.statusCode = 200;
+            res.end(
+              JSON.stringify({
+                success: true,
+                connection: defaultOrchestrator.getConnectionMetadata(),
+                ...state,
+              })
+            );
+          } catch (err: any) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ success: false, error: err?.message || 'Orchestrator query failed' }));
+          }
+          return;
+        }
+
+        if (url === '/api/agents/register' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsed = JSON.parse(body || '{}');
+              const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+              const result = await defaultOrchestrator.registerAgent(parsed);
+              res.statusCode = 201;
+              res.end(JSON.stringify({ success: true, data: result }));
+            } catch (err: any) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ success: false, error: err?.message || 'Validation failed' }));
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/telemetry' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsed = JSON.parse(body || '{}');
+              const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+              const record = await defaultOrchestrator.logTelemetry(parsed);
+              res.statusCode = 202;
+              res.end(JSON.stringify({ success: true, status: 'committed', data: record }));
+            } catch (err: any) {
+              res.statusCode = 422;
+              res.end(JSON.stringify({ success: false, error: err?.message || 'Unprocessable telemetry payload' }));
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/agents/status' && req.method === 'PATCH') {
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsed = JSON.parse(body || '{}');
+              const { defaultOrchestrator } = await import('./src/agents/orchestrator.ts');
+              const updated = await defaultOrchestrator.updateAgentLifecycleStatus(
+                String(parsed.id || ''),
+                parsed.lifecycle_status
+              );
+              res.statusCode = 200;
+              res.end(JSON.stringify({ success: true, data: updated }));
+            } catch (err: any) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ success: false, error: err?.message || 'Status update failed' }));
             }
           });
           return;

@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-10-18T01:50:10.188Z",
+  "exportedAt": "2026-10-19T14:21:59.484Z",
   "censusScale": {
     "activeConcurrent": 342892410000,
     "latentBlueprintsAndStaged": 471480590000,
@@ -33,7 +33,7 @@
         "temperatureC": 64,
         "kernelFaultsCount": 0,
         "driverVersion": "550.54.14 CUDA 12.4",
-        "timestamp": "1:50:10 AM"
+        "timestamp": "2:21:59 PM"
       },
       {
         "gpuId": "gpu-ashburn-b200-04",
@@ -45,7 +45,7 @@
         "temperatureC": 69,
         "kernelFaultsCount": 1,
         "driverVersion": "560.28.03 CUDA 12.6",
-        "timestamp": "1:50:10 AM"
+        "timestamp": "2:21:59 PM"
       },
       {
         "gpuId": "gpu-zurich-h200-07",
@@ -57,7 +57,7 @@
         "temperatureC": 58,
         "kernelFaultsCount": 0,
         "driverVersion": "550.54.14 CUDA 12.4",
-        "timestamp": "1:50:10 AM"
+        "timestamp": "2:21:59 PM"
       },
       {
         "gpuId": "gpu-singapore-tpu5e-02",
@@ -69,7 +69,7 @@
         "temperatureC": 52,
         "kernelFaultsCount": 0,
         "driverVersion": "LibTPU Sovereign v2.1",
-        "timestamp": "1:50:10 AM"
+        "timestamp": "2:21:59 PM"
       }
     ],
     "cudaTraps": [
