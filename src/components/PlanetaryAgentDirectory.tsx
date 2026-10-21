@@ -16,6 +16,7 @@ import {
   Layers,
   LayoutGrid,
   List,
+  Binary,
 } from 'lucide-react';
 import {
   PlanetaryAgentRecord,
@@ -25,6 +26,7 @@ import {
 } from '../types/census.ts';
 import { planetaryCensusRegistry } from '../lib/censusRegistry.ts';
 import { AgentDossierModal } from './AgentDossierModal.tsx';
+import { DaivBinaryInspectorModal, DaivAgentRecord } from './DaivBinaryInspectorModal.tsx';
 
 interface PlanetaryAgentDirectoryProps {
   theme: 'worldometers' | 'sovereign';
@@ -48,6 +50,7 @@ export const PlanetaryAgentDirectory: React.FC<PlanetaryAgentDirectoryProps> = (
   const [activeEra, setActiveEra] = useState<AgentEra | 'ALL'>(selectedEraFilter || 'ALL');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [inspectedAgent, setInspectedAgent] = useState<PlanetaryAgentRecord | null>(null);
+  const [daivInspectedAgent, setDaivInspectedAgent] = useState<DaivAgentRecord | null>(null);
 
   // Sync external prop if changed
   React.useEffect(() => {
@@ -406,15 +409,35 @@ export const PlanetaryAgentDirectory: React.FC<PlanetaryAgentDirectoryProps> = (
                   </td>
 
                   <td className="py-3 px-4 text-right">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setInspectedAgent(agent);
-                      }}
-                      className="px-2.5 py-1 bg-cyan-700/80 hover:bg-cyan-600 text-white rounded text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer transition"
-                    >
-                      <Eye className="w-3 h-3" /> Dossier
-                    </button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDaivInspectedAgent({
+                            agentUid: agent.id,
+                            name: agent.name,
+                            tier: agent.tier,
+                            platform: agent.platform,
+                            status: agent.status,
+                            regionCity: agent.regionCity,
+                            merkleLeafHash: agent.merkleLeafHash,
+                          });
+                        }}
+                        className="px-2 py-1 bg-purple-700/80 hover:bg-purple-600 text-white rounded text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer transition"
+                        title="Inspect 128-byte DAIV binary memory struct"
+                      >
+                        <Binary className="w-3 h-3" /> DAIV
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setInspectedAgent(agent);
+                        }}
+                        className="px-2.5 py-1 bg-cyan-700/80 hover:bg-cyan-600 text-white rounded text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer transition"
+                      >
+                        <Eye className="w-3 h-3" /> Dossier
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -465,9 +488,28 @@ export const PlanetaryAgentDirectory: React.FC<PlanetaryAgentDirectoryProps> = (
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-800 text-[10px]">
-                <span className={`px-1.5 py-0.5 rounded border ${getStatusBadge(agent.status)}`}>
-                  {agent.status}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className={`px-1.5 py-0.5 rounded border ${getStatusBadge(agent.status)}`}>
+                    {agent.status}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDaivInspectedAgent({
+                        agentUid: agent.id,
+                        name: agent.name,
+                        tier: agent.tier,
+                        platform: agent.platform,
+                        status: agent.status,
+                        regionCity: agent.regionCity,
+                        merkleLeafHash: agent.merkleLeafHash,
+                      });
+                    }}
+                    className="px-1.5 py-0.5 bg-purple-700/80 hover:bg-purple-600 text-white rounded font-mono font-bold text-[9px] cursor-pointer"
+                  >
+                    DAIV
+                  </button>
+                </div>
                 <span className="font-mono text-gray-400">{agent.merkleLeafHash.slice(0, 12)}</span>
               </div>
             </div>
@@ -484,6 +526,14 @@ export const PlanetaryAgentDirectory: React.FC<PlanetaryAgentDirectoryProps> = (
           setInspectedAgent(null);
           onOpenTombstone();
         }}
+        theme={theme}
+      />
+
+      {/* 128-Byte DAIV Sub-Atomic Binary Struct & Hex Dump Modal */}
+      <DaivBinaryInspectorModal
+        agent={daivInspectedAgent}
+        isOpen={Boolean(daivInspectedAgent)}
+        onClose={() => setDaivInspectedAgent(null)}
         theme={theme}
       />
     </section>

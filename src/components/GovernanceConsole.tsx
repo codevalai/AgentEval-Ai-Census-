@@ -9,9 +9,12 @@ import { GOVERNANCE_RFCS } from '../data/initialData.ts';
 import { calculateHash, sovereignEventFabric, sovereignAuditSpine } from '../lib/merkleSpine.ts';
 import { censusSSOT } from '../lib/censusSSOT.ts';
 import { getTaxonomySummary } from '../data/swarmTaxonomy76.ts';
+import { CensusStats } from '../types/census.ts';
+import { sovereignCyberneticBus } from '../core/sovereign-cybernetic-bus.ts';
 
 interface GovernanceConsoleProps {
   theme: 'worldometers' | 'sovereign';
+  stats?: CensusStats;
 }
 
 interface LatticeRotationReport {
@@ -26,8 +29,8 @@ interface LatticeRotationReport {
   timestamp: string;
 }
 
-function buildZ3SatProofOutput(): string {
-  const ssot = censusSSOT.getSnapshot();
+function buildZ3SatProofOutput(statsOverride?: CensusStats): string {
+  const ssot = censusSSOT.getSnapshot(statsOverride);
   const tax = getTaxonomySummary(ssot.activeAgents);
   const sumPlatforms = ssot.platforms.reduce((a, p) => a + p.activeAgents, 0);
   const sumTiers = ssot.tiers.reduce((a, t) => a + t.count, 0);
@@ -74,10 +77,14 @@ function buildZ3SatProofOutput(): string {
 ; Cryptographic Witness Leaf: ${witnessHash}`;
 }
 
-export const GovernanceConsole: React.FC<GovernanceConsoleProps> = ({ theme }) => {
+export const GovernanceConsole: React.FC<GovernanceConsoleProps> = ({ theme, stats }) => {
   const isLight = theme === 'worldometers';
   const [isRunningProver, setIsRunningProver] = useState(false);
-  const [z3ProofOutput, setZ3ProofOutput] = useState<string>(() => buildZ3SatProofOutput());
+  const [z3ProofOutput, setZ3ProofOutput] = useState<string>(() => buildZ3SatProofOutput(stats));
+
+  React.useEffect(() => {
+    setZ3ProofOutput(buildZ3SatProofOutput(stats));
+  }, [stats?.totalAgents]);
 
   const [isRotatingKeys, setIsRotatingKeys] = useState(false);
   const [latticeReport, setLatticeReport] = useState<LatticeRotationReport>(() => {
@@ -99,7 +106,7 @@ export const GovernanceConsole: React.FC<GovernanceConsoleProps> = ({ theme }) =
     setIsRunningProver(true);
     await new Promise((r) => setTimeout(r, 450));
 
-    const proof = buildZ3SatProofOutput();
+    const proof = buildZ3SatProofOutput(stats);
     setZ3ProofOutput(proof);
     setIsRunningProver(false);
 
@@ -133,6 +140,7 @@ export const GovernanceConsole: React.FC<GovernanceConsoleProps> = ({ theme }) =
     };
 
     setLatticeReport(report);
+    sovereignCyberneticBus.notifyKeyRotation(report.epochId);
     setIsRotatingKeys(false);
 
     sovereignEventFabric.publish(

@@ -1,5 +1,17 @@
 import { relations } from 'drizzle-orm';
-import { index, integer, jsonb, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  bigint,
+  boolean,
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  real,
+  serial,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 // Define the 'users' table linking Firebase Auth UID to relational record
 export const users = pgTable('users', {
@@ -108,3 +120,46 @@ export const censusTelemetryRelations = relations(censusTelemetry, ({ one }) => 
     references: [censusAgents.id],
   }),
 }));
+
+// ============================================================================
+// PART VI: XERJ DUAL-ENGINE SOVEREIGN LEDGER & LEASE LOCKS (v3.9)
+// Reconciled with supabase/migrations/20261020000000_xerj_sovereign_ledger.sql
+// ============================================================================
+
+export const censusXerjTelemetryLedger = pgTable(
+  'census_xerj_telemetry_ledger',
+  {
+    recordId: uuid('record_id').primaryKey().defaultRandom(),
+    agentId: text('agent_id').notNull(),
+    corpusSlug: text('corpus_slug').notNull().default('sovereign-infinity-ai-census'),
+    stage: text('stage').notNull(), // 'SPAWN' | 'PROBE' | 'SYSTEM1_DECIDE' | 'SYSTEM2_ESCALATE' | 'GRAPH_LINK' | 'COMMIT' | 'TERMINATE' | 'FAULT'
+    decisionTier: text('decision_tier').notNull(), // 'XERJ_LOCAL_SYSTEM1' | 'XERJ_HYBRID_RAG' | 'LLM_SYSTEM2_FALLBACK'
+    confidenceScore: real('confidence_score').notNull(),
+    latencyMs: real('latency_ms').notNull(),
+    tokensBurned: integer('tokens_burned').notNull().default(0),
+    tokensSavedEstimate: integer('tokens_saved_estimate').notNull().default(0),
+    payloadSummary: text('payload_summary').notNull(),
+    prevMerkleHash: text('prev_merkle_hash').notNull(),
+    merkleHash: text('merkle_hash').notNull().unique(),
+    ed25519Signature: text('ed25519_signature').notNull(),
+    publicKeyDerHex: text('public_key_der_hex').notNull(),
+    xerjIndexed: boolean('xerj_indexed').notNull().default(true),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('idx_census_xerj_agent_stage').on(table.agentId, table.stage, table.createdAt),
+    index('idx_census_xerj_merkle').on(table.merkleHash),
+  ]
+);
+
+export const censusAgentLeases = pgTable(
+  'census_agent_leases',
+  {
+    agentId: text('agent_id').primaryKey(),
+    workerNodeId: text('worker_node_id').notNull(),
+    fencingToken: bigint('fencing_token', { mode: 'number' }).notNull().default(1000),
+    leaseExpiresAt: timestamp('lease_expires_at', { withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  }
+);

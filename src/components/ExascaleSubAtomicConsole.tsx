@@ -48,6 +48,7 @@ import {
   Sim20ManifoldClause,
   ExascalePhase7State,
 } from '../services/exascaleSubAtomicEngine.ts';
+import { DaivBinaryInspectorModal, DaivAgentRecord } from './DaivBinaryInspectorModal.tsx';
 
 interface ExascaleSubAtomicConsoleProps {
   theme: 'worldometers' | 'sovereign';
@@ -156,9 +157,23 @@ export const ExascaleSubAtomicConsole: React.FC<ExascaleSubAtomicConsoleProps> =
     exascaleSubAtomicEngine.autoRatifySim20Clause(clauseId);
   };
 
+  const [daivModalAgent, setDaivModalAgent] = useState<DaivAgentRecord | null>(null);
+
   const handleSelectDaivAgent = (uid: string) => {
     setSelectedDaivUid(uid);
     setDaivStruct(exascaleSubAtomicEngine.generateDaiv128ByteStruct(uid));
+    const rec = directory.find((r) => r.agentUid === uid);
+    if (rec) {
+      setDaivModalAgent({
+        agentUid: rec.agentUid,
+        name: rec.name,
+        tier: rec.tier,
+        platform: rec.platform,
+        status: rec.status,
+        regionCity: rec.originMegasite,
+        merkleLeafHash: rec.kzgVerkleLeaf || rec.bls12LeafId,
+      });
+    }
   };
 
   const handleOpenDossier = (uid: string) => {
@@ -1295,6 +1310,14 @@ export const ExascaleSubAtomicConsole: React.FC<ExascaleSubAtomicConsoleProps> =
           </div>
         )}
       </div>
+
+      {/* 128-Byte DAIV Sub-Atomic Binary Struct & Hex Dump Modal */}
+      <DaivBinaryInspectorModal
+        agent={daivModalAgent}
+        isOpen={Boolean(daivModalAgent)}
+        onClose={() => setDaivModalAgent(null)}
+        theme={theme}
+      />
     </section>
   );
 };

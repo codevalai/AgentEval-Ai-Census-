@@ -51,6 +51,7 @@ import { SyntropicCivilizationConsole } from './components/SyntropicCivilization
 import { ExascaleSubAtomicConsole } from './components/ExascaleSubAtomicConsole.tsx';
 import { WorldwideWebAccuracyConsole } from './components/WorldwideWebAccuracyConsole.tsx';
 import { SupabaseOrchestratorConsole } from './components/SupabaseOrchestratorConsole.tsx';
+import { XerjZenithConsole } from './components/XerjZenithConsole.tsx';
 import {
   INITIAL_STATS,
   INITIAL_REGIONS,
@@ -454,6 +455,9 @@ export default function App() {
 
         {/* Sovereign Infinity AI Census: Supabase (wvhjcxxfslzkechhoolz) & Autonomous Orchestrator Master Console */}
         <SupabaseOrchestratorConsole theme={theme} />
+
+        {/* Sovereign Zenith: XERJ Dual-Engine Flagship Console (3-Tier Routing, Graph, FSM & SSE) */}
+        <XerjZenithConsole theme={theme} />
 
         {/* Maximum Live Civilization: Global AI Civilization Live Census (10 Master Platforms) */}
         <GlobalCivilizationDashboard

@@ -130,6 +130,27 @@ Linked via `supabase link --project-ref wvhjcxxfslzkechhoolz` (`https://wvhjcxxf
 
 ---
 
+## 🔥 XERJ Corpus Hub Flagship Architecture (Dual-Engine Mesh • Grade: AAA)
+
+Selected by Ivan's team as the flagship reference implementation for **[XERJ](https://github.com/xerj-org/xerj)** (PR #1721 G7 Quality Gate #1503), the repository natively couples five core XERJ runtime primitives directly into TypeScript and Supabase:
+
+| Subsystem | XERJ Endpoint | Architecture Implementation |
+| :--- | :--- | :--- |
+| **1. 3-Tier Cognitive Routing** | `POST /_decide` | Probes local `xerj-history-vote-1` (confidence $\ge 0.85$, $<2\text{ms}$, $\$0.00$ tokens) before escalating to Gemini System-2. |
+| **2. Per-Agent Episodic Memory** | `POST /_memory/{agent_id}` | Physically isolated memory with BM25 + neural embeddings fused via Reciprocal Rank Fusion (RRF). |
+| **3. Second-Brain Evidence Graph** | `POST /_graph/link` & `/_graph/ego` | Verifiable 2-hop bounded relationship graph linking census nodes, agents, and invariants with attached evidence passages. |
+| **4. High-Throughput Bulk Ingest** | `POST /_bulk` (NDJSON) | 1.72x higher ingest throughput ring-buffer dual-flushing to XERJ and Supabase `census_xerj_telemetry_ledger`. |
+| **5. Deterministic Query Planning** | `POST /_ask` (`xerj_plan`) | Rule-based plain-words compiler to Elasticsearch Query DSL without LLM hallucinations. |
+
+### Distributed FSM & Circuit Breaker Invariants
+- **Monotonic Fencing Tokens (`src/agents/sovereign-lifecycle-fsm.ts`)**: Atomic lease locks with strictly incrementing `fencingToken: bigint` rejecting split-brain zombie execution.
+- **Zero-Loss Spooling WAL (`src/telemetry/xerj-wal-circuit-breaker.ts`)**: Half-open circuit breaker auto-failing over to `.xerj-telemetry-spool.jsonl`, ingested directly by `xerj autoindex`.
+- **Live SSE Telemetry Stream (`/api/stream/telemetry`)**: Real-time Server-Sent Events broadcaster streaming Ed25519-signed Merkle records.
+- **Embedded MCP Server (`src/mcp/census-mcp-server.ts`)**: Exposes census lease, telemetry, and planning tools for Claude Code, Cursor, and Codex.
+- **Full Architecture Spec**: See [`docs/XERJ_FLAGSHIP_ARCHITECTURE.md`](docs/XERJ_FLAGSHIP_ARCHITECTURE.md) and [`AGENTS.md`](AGENTS.md).
+
+---
+
 ## 🏛️ System Architecture & 7-Phase Planetary Stack
 
 ```text

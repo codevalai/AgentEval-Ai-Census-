@@ -17,6 +17,7 @@ import {
   Download,
   Activity,
   Server,
+  Search,
 } from 'lucide-react';
 import { CensusStats } from '../types/census.ts';
 
@@ -32,6 +33,7 @@ interface HeaderProps {
   onOpenExport: () => void;
   onOpenEnterpriseConsole?: () => void;
   onOpenGitHub?: () => void;
+  onOpenCommandPalette?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -46,8 +48,17 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenExport,
   onOpenEnterpriseConsole,
   onOpenGitHub,
+  onOpenCommandPalette,
 }) => {
   const isLight = theme === 'worldometers';
+
+  const liveActive = Math.max(342892410000, Math.round(stats.totalAgents));
+  const activeDelta = Math.max(0, liveActive - 342892410000);
+  const latentDelta = Math.round(activeDelta * 1.375);
+  const totalCombined = liveActive + 471480590000 + latentDelta;
+  const ceiling = totalCombined + 318000000000;
+  const coveragePct = ((totalCombined / ceiling) * 100).toFixed(2);
+  const combinedB = (totalCombined / 1e9).toFixed(2);
 
   return (
     <header
@@ -98,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="flex items-center gap-3 text-[11px]">
           <span className="hidden sm:inline font-mono">
-            Coverage: <strong className="text-emerald-600 font-semibold">71.9% Indexed (814.37B Live / 318.00B Dark Matter • Honest Partial)</strong>
+            Coverage: <strong className="text-emerald-600 font-semibold">{coveragePct}% Indexed ({combinedB}B Live / 318.00B Dark Matter • Honest Partial)</strong>
           </span>
           <span className="hidden lg:inline text-gray-400">|</span>
           <span className="hidden lg:inline">
@@ -189,6 +200,22 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Server className="w-3.5 h-3.5 text-blue-500" />
               <span className="hidden sm:inline">Enterprise Reality</span>
+            </button>
+          )}
+
+          {/* XERJ Hybrid Command Palette */}
+          {onOpenCommandPalette && (
+            <button
+              onClick={onOpenCommandPalette}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold font-mono transition-all cursor-pointer ${
+                isLight
+                  ? 'bg-cyan-50 text-cyan-800 border border-cyan-300 hover:bg-cyan-100 shadow-xs'
+                  : 'bg-cyan-950/80 text-cyan-300 border border-cyan-700/60 hover:bg-cyan-900 shadow-xs'
+              }`}
+              title="Open XERJ Hybrid Search & Command Palette (Cmd+K / Ctrl+K)"
+            >
+              <Search className="w-3.5 h-3.5 text-cyan-500" />
+              <span className="hidden sm:inline">⌘K Search</span>
             </button>
           )}
 

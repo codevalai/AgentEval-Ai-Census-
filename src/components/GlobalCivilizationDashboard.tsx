@@ -173,7 +173,7 @@ export const GlobalCivilizationDashboard: React.FC<GlobalCivilizationDashboardPr
             {totalCivilizationCount.toLocaleString()}
           </div>
           <div className="text-xs text-slate-300 font-mono">
-            {activeOnlyCount.toLocaleString()} Active (342.89B) + {latentOnlyCount.toLocaleString()} Latent (471.48B) = {totalCivilizationCount.toLocaleString()} Combined (814.37B) • Coverage: {ssot.directInstrumentedCoveragePct}% Indexed (28.1% Dark Matter 318.00B)
+            {activeOnlyCount.toLocaleString()} Active ({(activeOnlyCount / 1e9).toFixed(2)}B) + {latentOnlyCount.toLocaleString()} Latent ({(latentOnlyCount / 1e9).toFixed(2)}B) = {totalCivilizationCount.toLocaleString()} Combined ({(totalCivilizationCount / 1e9).toFixed(2)}B) • Coverage: {ssot.directInstrumentedCoveragePct.toFixed(2)}% Indexed ({ssot.darkMatterRatioPct.toFixed(1)}% Dark Matter 318.00B)
           </div>
         </div>
 
@@ -182,7 +182,7 @@ export const GlobalCivilizationDashboard: React.FC<GlobalCivilizationDashboardPr
           {/* Active */}
           <div className="p-3.5 rounded-xl bg-black/30 border border-white/10">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">1. Active Agents (342.89B)</span>
+              <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">1. Active Agents ({(activeOnlyCount / 1e9).toFixed(2)}B)</span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Executing Now</span>
             </div>
             <div className="text-xl sm:text-2xl font-bold font-mono text-white mt-1.5 tabular-nums">
@@ -463,7 +463,7 @@ export const GlobalCivilizationDashboard: React.FC<GlobalCivilizationDashboardPr
                 76-Domain Planetary Swarm Taxonomy (5 Architectural Layers)
               </h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                Reconciled across {taxonomySummary.verifiedTotalUnits.toLocaleString()} Active Agents (342.89B) &amp; {taxonomySummary.totalAgentsMil.toLocaleString()}M (814.37B) Combined Live Units
+                Reconciled across {taxonomySummary.verifiedTotalUnits.toLocaleString()} Active Agents ({(taxonomySummary.verifiedTotalUnits / 1e9).toFixed(2)}B) &amp; {taxonomySummary.totalAgentsMil.toLocaleString()}M ({(totalCivilizationCount / 1e9).toFixed(2)}B) Combined Live Units
               </p>
             </div>
             {onScrollToSection && (

@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { CensusStats } from '../types/census.ts';
 import { censusSSOT } from '../lib/censusSSOT.ts';
+import { sovereignCyberneticBus } from '../core/sovereign-cybernetic-bus.ts';
 import {
   worldwideWebAccuracyEngine,
   LiveWorldwideWebSweepResponse,
@@ -149,6 +150,11 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
         setSimulatedRttMs(data.meanGlobalRttMs || 27.9);
         setSweepStatusBanner(
           `Live Worldwide Web Sweep Complete (${data.totalEndpointsProbed} endpoints probed • ${data.packageVelocity.combinedDailySdkPulls.toLocaleString()} daily SDK pulls • ${data.openRouterMesh.totalLiveModels} live OpenRouter frontier models • Mean RTT ${data.meanGlobalRttMs}ms • Witness ${data.merkleWitnessHash})`
+        );
+        sovereignCyberneticBus.notifyWebSweep(
+          data.meanGlobalRttMs || 27.9,
+          data.totalEndpointsProbed || 21,
+          data.openRouterMesh?.totalLiveModels || 468
         );
       }
     } catch {

@@ -64,6 +64,7 @@ export interface CensusScalingSnapshot {
   coveragePercent: number; // 30.3 | 71.9
   totalPlanetaryPopulation: number; // 1,132,373,000,000 (1.132T)
   currentlyTrackedCount: number; // 342.89B Active vs 814.37B Combined
+  activeAttestedCount: number; // 342.89B Active Concurrent baseline
   darkMatterUnindexedCount: number; // 318,000,000,000 (318.00B)
   darkMatterUnindexedRatioPct: number; // 28.1%
   illuminatedDarkMatterDelta: number; // 471,480,590,000 (471.48B Latent Warm Pool)
@@ -487,6 +488,7 @@ export class PlanetaryCensusScalingEngine {
       coveragePercent,
       totalPlanetaryPopulation: this.TOTAL_PLANETARY,
       currentlyTrackedCount: currentlyTracked,
+      activeAttestedCount: this.BASELINE_COUNT,
       darkMatterUnindexedCount: darkMatterCount,
       darkMatterUnindexedRatioPct: darkRatio,
       illuminatedDarkMatterDelta: delta,

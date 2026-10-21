@@ -42,6 +42,7 @@ import {
 } from '../types/census.ts';
 import { threatRadarBackend } from '../lib/threatRadarBackend.ts';
 import { sovereignEventFabric } from '../lib/merkleSpine.ts';
+import { sovereignCyberneticBus } from '../core/sovereign-cybernetic-bus.ts';
 
 interface ThreatRadarProps {
   threats: ThreatVector[];
@@ -90,6 +91,7 @@ export const ThreatRadar: React.FC<ThreatRadarProps> = ({
     setTimeout(() => {
       threatRadarBackend.executeMitigation(threatId, action);
       setTelemetry(threatRadarBackend.getTelemetrySnapshot());
+      sovereignCyberneticBus.notifyThreatQuarantine(threatId, action);
       setExecutingMitigation(null);
     }, 450);
   };

@@ -103,15 +103,15 @@ export const HeroCounter: React.FC<HeroCounterProps> = ({
           SSOT Mathematical Invariant:
         </span>
         <span className="text-gray-700 dark:text-gray-300">
-          <strong>{ssot.activeAgents.toLocaleString()}</strong> Active (342.89B) = Σ(10 Platforms) = Σ(4 Tiers) = Σ(20 Regions)
+          <strong>{ssot.activeAgents.toLocaleString()}</strong> Active ({(ssot.activeAgents / 1e9).toFixed(2)}B) = Σ(10 Platforms) = Σ(4 Tiers) = Σ(20 Regions)
         </span>
         <span className="text-gray-400">•</span>
         <span className="text-gray-700 dark:text-gray-300">
-          + <strong>{ssot.latentAgents.toLocaleString()}</strong> Latent (471.48B) = <strong>{ssot.totalCombinedVerified.toLocaleString()}</strong> Combined (814.37B)
+          + <strong>{ssot.latentAgents.toLocaleString()}</strong> Latent ({(ssot.latentAgents / 1e9).toFixed(2)}B) = <strong>{ssot.totalCombinedVerified.toLocaleString()}</strong> Combined ({(ssot.totalCombinedVerified / 1e9).toFixed(2)}B)
         </span>
         <span className="text-gray-400">•</span>
         <span className="text-amber-600 dark:text-amber-400 font-semibold">
-          Coverage: 71.9% Indexed (814.37B Live / 318.00B Dark Matter • 1.48T/day Ephemeral)
+          Coverage: {ssot.directInstrumentedCoveragePct.toFixed(2)}% Indexed ({(ssot.totalCombinedVerified / 1e9).toFixed(2)}B Live / 318.00B Dark Matter • 1.48T/day Ephemeral)
         </span>
       </div>
 

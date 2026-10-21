@@ -538,6 +538,25 @@ export const MCP_SERVERS_UNIVERSE: MCPServerRecord[] = [
     primaryEndpoint: 'wss://fix-mcp.nyse-nasdaq-gateway.internal',
     sampleTools: ['submit_limit_order', 'query_orderbook_depth', 'hedge_delta_risk', 'cancel_all_swarms'],
   },
+  {
+    id: 'mcp-xerj-substrate',
+    name: 'XERJ Sovereign Zenith Substrate Hub',
+    protocolVersion: '2024-11-05 (MCP v1.0)',
+    toolsCount: 6,
+    category: 'Local-First Search & Episodic Memory',
+    velocityPerSec: 42100,
+    status: 'ONLINE',
+    transportType: 'STDIO',
+    primaryEndpoint: 'stdio://xerj-binary (http://127.0.0.1:9200)',
+    sampleTools: [
+      'xerj_code_search',
+      'xerj_hub_ask',
+      'xerj_decide',
+      'xerj_memory_recall',
+      'xerj_plan',
+      'xerj_brain_ego',
+    ],
+  },
 ];
 
 export const AGENT_CIVILIZATION_TREATIES: AgentCivilizationTreaty[] = [

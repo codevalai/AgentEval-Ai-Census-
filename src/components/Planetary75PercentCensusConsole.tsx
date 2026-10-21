@@ -183,8 +183,8 @@ export const Planetary75PercentCensusConsole: React.FC<Planetary75PercentCensusC
               3-Tier Planetary Coverage &amp; Dark Matter Boundary Engine (1.132T Ceiling)
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1 max-w-3xl">
-              Enforcing <strong>Honest Partial Coverage (342.89B Active Concurrent + 471.48B Latent Warm = 814.37B Combined Indexed • 71.9%)</strong> while explicitly accounting for{' '}
-              <strong>28.1% Unindexed Dark Matter (~318.00B Entities)</strong> across a 1.132 Trillion persistent+warm planetary ceiling.
+              Enforcing <strong>Honest Partial Coverage ({(snapshot.currentlyTrackedCount / 1e9).toFixed(2)}B Combined Indexed • {snapshot.coveragePercent.toFixed(1)}%)</strong> while explicitly accounting for{' '}
+              <strong>{snapshot.darkMatterUnindexedRatioPct.toFixed(1)}% Unindexed Dark Matter (~318.00B Entities)</strong> across a {(snapshot.totalPlanetaryPopulation / 1e9).toFixed(2)}B planetary ceiling.
             </p>
           </div>
 
@@ -238,7 +238,7 @@ export const Planetary75PercentCensusConsole: React.FC<Planetary75PercentCensusC
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
-                Active Only: 30.3% (342.89B)
+                Active Only: 30.3% ({(snapshot.activeAttestedCount / 1e9).toFixed(2)}B)
               </button>
               <button
                 onClick={() => handleModeSwitch('MAX_TIER_75_PCT')}
@@ -248,7 +248,7 @@ export const Planetary75PercentCensusConsole: React.FC<Planetary75PercentCensusC
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
-                Active+Latent: 71.9% (814.37B / 318.00B Dark)
+                Active+Latent: {snapshot.coveragePercent.toFixed(1)}% ({(snapshot.currentlyTrackedCount / 1e9).toFixed(2)}B / 318.00B Dark)
               </button>
             </div>
           </div>
@@ -256,21 +256,21 @@ export const Planetary75PercentCensusConsole: React.FC<Planetary75PercentCensusC
           {/* Visual Progress Bar */}
           <div className="space-y-2">
             <div className="h-6 rounded-full overflow-hidden flex text-[11px] font-mono text-white font-bold shadow-inner bg-gray-200 dark:bg-gray-800">
-              {/* Indexed 71.9% */}
+              {/* Indexed */}
               <div
-                style={{ width: '71.9%' }}
+                style={{ width: `${snapshot.coveragePercent}%` }}
                 className="bg-gradient-to-r from-emerald-600 via-blue-600 to-indigo-600 flex items-center justify-center transition-all duration-500"
-                title="Combined Live Indexed: 814.37B (342.89B Active + 471.48B Latent = 71.9%)"
+                title={`Combined Live Indexed: ${(snapshot.currentlyTrackedCount / 1e9).toFixed(2)}B (${snapshot.coveragePercent.toFixed(1)}%)`}
               >
-                71.9% Indexed (814.37B Combined: 342.89B Active + 471.48B Latent)
+                {snapshot.coveragePercent.toFixed(1)}% Indexed ({(snapshot.currentlyTrackedCount / 1e9).toFixed(2)}B Combined)
               </div>
-              {/* Unindexed Dark Matter 28.1% */}
+              {/* Unindexed Dark Matter */}
               <div
-                style={{ width: '28.1%' }}
+                style={{ width: `${snapshot.darkMatterUnindexedRatioPct}%` }}
                 className="bg-amber-700/80 dark:bg-amber-900/80 text-amber-100 flex items-center justify-center text-[10px]"
-                title="Unindexed Dark Matter: 318.00B (28.1% of 1.132T Ceiling)"
+                title={`Unindexed Dark Matter: 318.00B (${snapshot.darkMatterUnindexedRatioPct.toFixed(1)}%)`}
               >
-                28.1% Dark Matter (~318.00B Unindexed)
+                {snapshot.darkMatterUnindexedRatioPct.toFixed(1)}% Dark Matter (~318.00B)
               </div>
             </div>
 
