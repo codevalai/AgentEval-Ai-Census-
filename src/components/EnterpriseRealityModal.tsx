@@ -530,9 +530,9 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
                 {/* Role Switcher */}
                 <div className="flex items-center gap-1.5 text-xs font-mono">
                   <span className="text-gray-500">Role:</span>
-                  {(['CENSUS_OPERATOR', 'LAB_REGISTRAR', 'THREAT_DISPATCHER'] as GovernanceRole[]).map((r) => (
+                  {(['CENSUS_OPERATOR', 'LAB_REGISTRAR', 'THREAT_DISPATCHER'] as GovernanceRole[]).map((r, idx) => (
                     <button
-                      key={r}
+                      key={`${r}-${idx}`}
                       onClick={() => handleSwitchRole(r)}
                       className={`px-2 py-0.5 rounded border text-[10px] cursor-pointer transition-all ${
                         activeRole === r

@@ -16,12 +16,14 @@
     "telemetry-export": "tsx scripts/telemetry-sync-export.ts",
     "xerj:hub:list": "tsx scripts/xerj-hub-list.ts",
     "xerj:feedback": "tsx scripts/xerj-feedback.ts --open-pr",
+    "trendshift:sweep": "tsx -e \"import { TrendshiftEcosystemHarvester } from './src/services/trendshiftEcosystemHarvester.ts'; (async () => { const h = new TrendshiftEcosystemHarvester(); const res = await h.fetchAndIngestEcosystem('daily', ['python', 'typescript']); console.log('Ecosystem Sweep Complete:', res); })();\"",
     "test:e2e": "tsx src/agents/__tests__/sovereign-e2e.test.ts",
     "verify:all": "tsc --noEmit && tsx src/agents/__tests__/sovereign-e2e.test.ts && tsx scripts/replay-verify.ts && tsx scripts/threat-radar-verify.ts && tsx scripts/governance-rfc-verify.ts && tsx scripts/telemetry-sync-export.ts"
   },
   "dependencies": {
     "@google/genai": "*",
     "@supabase/supabase-js": "^2.118.0",
+    "better-sqlite3": "^11.8.1",
     "@tailwindcss/vite": "*",
     "@vis.gl/react-google-maps": "*",
     "@vitejs/plugin-react": "*",
@@ -40,6 +42,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
     "@types/express": "*",
     "@types/node": "*",
     "@types/pg": "*",

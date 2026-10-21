@@ -12,13 +12,17 @@ export const AgentStatusEnum = z.enum(['INITIALIZING', 'ACTIVE', 'SUSPENDED', 'T
 export const SeverityEnum = z.enum(['INFO', 'WARN', 'ERROR', 'CRITICAL']);
 
 export const AgentRegistrationSchema = z.object({
-  agent_name: z
-    .string()
-    .min(3)
-    .max(100)
-    .regex(/^[a-zA-Z0-9_-]+$/, 'Invalid agent naming convention'),
-  lifecycle_status: AgentStatusEnum.default('INITIALIZING'),
-  metadata: z.record(z.string(), z.any()).optional().default({}),
+  agent_name: z.string().min(3).max(100),
+  lifecycle_status: AgentStatusEnum.default('ACTIVE'),
+  metadata: z.record(z.string(), z.any()).default({}),
+});
+
+export const TelemetryEventSchema = z.object({
+  agent_id: z.string().uuid(),
+  event_type: z.string().min(2).max(50),
+  payload: z.record(z.string(), z.any()).default({}),
+  merkle_proof: z.string().startsWith('0x'),
+  latency_ms: z.number().nonnegative(),
 });
 
 export const TelemetryPayloadSchema = z.object({
@@ -28,7 +32,9 @@ export const TelemetryPayloadSchema = z.object({
   severity: SeverityEnum.default('INFO'),
 });
 
-export type AgentRegistration = z.infer<typeof AgentRegistrationSchema>;
+export type AgentRegistrationInput = z.infer<typeof AgentRegistrationSchema>;
+export type AgentRegistration = AgentRegistrationInput;
+export type TelemetryEventInput = z.infer<typeof TelemetryEventSchema>;
 export type TelemetryPayload = z.infer<typeof TelemetryPayloadSchema>;
 
 export const MASTER_MIGRATION_DDL = `

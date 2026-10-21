@@ -9,9 +9,13 @@
 
 import express, { Request, Response } from 'express';
 import { AutonomousOrchestrator } from './agents/orchestrator.ts';
+import harvesterRouter from './routes/harvester.ts';
+import censusOrchestratorRouter from './routes/censusOrchestrator.ts';
 
 export const app = express();
 app.use(express.json());
+app.use('/api', harvesterRouter);
+app.use('/api/v2', censusOrchestratorRouter);
 
 export const orchestrator = new AutonomousOrchestrator(
   process.env.SUPABASE_URL || 'https://wvhjcxxfslzkechhoolz.supabase.co',

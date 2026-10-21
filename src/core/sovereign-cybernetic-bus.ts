@@ -117,6 +117,10 @@ class SovereignCyberneticBus {
     }
   }
 
+  public emit(event: CyberneticTelemetryEvent): void {
+    this.publish(event);
+  }
+
   /**
    * Called when WWO-1.0 executes a live web sweep across 21 APIs
    */

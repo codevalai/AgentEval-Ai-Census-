@@ -199,9 +199,9 @@ export const MCPUniverseRegistry: React.FC<MCPUniverseRegistryProps> = ({
               Available MCP Tools ({selectedServer.sampleTools.length})
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {selectedServer.sampleTools.map((tool) => (
+              {selectedServer.sampleTools.map((tool, idx) => (
                 <div
-                  key={tool}
+                  key={`${tool}-${idx}`}
                   className={`p-2.5 rounded-lg border flex items-center justify-between gap-2 ${
                     isLight ? 'bg-gray-50 border-gray-200' : 'bg-[#141b2d] border-gray-800'
                   }`}

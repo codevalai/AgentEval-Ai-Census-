@@ -285,8 +285,8 @@ export const SovereignSkillConsole: React.FC<SovereignSkillConsoleProps> = ({ th
                   </p>
 
                   <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                    {sk.behaviorClasses.map((b) => (
-                      <span key={b} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/25 text-gray-400 border border-white/5">
+                    {sk.behaviorClasses.map((b, idx) => (
+                      <span key={`${b}-${idx}`} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/25 text-gray-400 border border-white/5">
                         {b}
                       </span>
                     ))}

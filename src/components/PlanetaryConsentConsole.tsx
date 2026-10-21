@@ -235,8 +235,8 @@ export const PlanetaryConsentConsole: React.FC<PlanetaryConsentConsoleProps> = (
 
                   <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-2 border-t border-gray-100 dark:border-gray-800 text-[10px] font-mono text-gray-400">
                     <span className="text-gray-500">Enforced Invariants:</span>
-                    {clause.enforcedInvariants.map((inv) => (
-                      <span key={inv} className="px-1.5 py-0.5 rounded bg-black/30 text-cyan-300 border border-white/5">
+                    {clause.enforcedInvariants.map((inv, idx) => (
+                      <span key={`${inv}-${idx}`} className="px-1.5 py-0.5 rounded bg-black/30 text-cyan-300 border border-white/5">
                         {inv}
                       </span>
                     ))}

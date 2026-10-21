@@ -1,0 +1,19 @@
+# Dependencies & Runtime
+node_modules/
+dist/
+build/
+.turbo/
+
+# Local Databases & State
+*.db
+*.db-journal
+trendshift.db
+*.log
+
+# Environment & Secrets
+.env
+.env.local
+
+# Generated Local Manifests (if untracked)
+xerj-hub-manifests/
+tools/xerj-code/hub/

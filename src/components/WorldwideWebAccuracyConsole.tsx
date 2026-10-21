@@ -612,9 +612,9 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
                       Max Context: {(prov.maxContextLength || 128000).toLocaleString()} tokens
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {prov.sampleModels.map((m) => (
+                      {prov.sampleModels.map((m, idx) => (
                         <span
-                          key={m}
+                          key={`${m}-${idx}`}
                           className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/5 text-gray-700 dark:text-gray-300 truncate max-w-full"
                         >
                           {m}
@@ -1109,9 +1109,9 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
                     'api.github.com',
                     'langchain.com',
                     'ollama.com',
-                  ].map((dom) => (
+                  ].map((dom, idx) => (
                     <button
-                      key={dom}
+                      key={`${dom}-${idx}`}
                       onClick={() => handleInspectDomain(dom)}
                       className="px-2.5 py-1 rounded text-[11px] font-mono bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 cursor-pointer"
                     >

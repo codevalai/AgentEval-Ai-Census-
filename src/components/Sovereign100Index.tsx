@@ -402,9 +402,9 @@ export const Sovereign100Index: React.FC<Sovereign100IndexProps> = ({ theme }) =
                   <Wrench className="w-3.5 h-3.5 text-cyan-500" /> Exposed MCP Tools ({selectedRepo.mcpToolsExposed.length})
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {selectedRepo.mcpToolsExposed.map((tool) => (
+                  {selectedRepo.mcpToolsExposed.map((tool, idx) => (
                     <span
-                      key={tool}
+                      key={`${tool}-${idx}`}
                       className="px-2 py-0.5 rounded font-mono text-[10px] bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800"
                     >
                       {tool}()
@@ -418,9 +418,9 @@ export const Sovereign100Index: React.FC<Sovereign100IndexProps> = ({ theme }) =
                   <GitBranch className="w-3.5 h-3.5 text-purple-500" /> Dependent Swarm Agents ({selectedRepo.dependentSwarmAgents.length})
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {selectedRepo.dependentSwarmAgents.map((agent) => (
+                  {selectedRepo.dependentSwarmAgents.map((agent, idx) => (
                     <span
-                      key={agent}
+                      key={`${agent}-${idx}`}
                       className="px-2 py-0.5 rounded text-[10px] bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800"
                     >
                       {agent}
