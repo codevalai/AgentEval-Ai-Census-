@@ -35,6 +35,7 @@ import {
   Package,
   Award,
   Download,
+  CheckCircle2,
 } from 'lucide-react';
 import { CensusStats } from '../types/census.ts';
 import { sovereignCyberneticBus } from '../core/sovereign-cybernetic-bus.ts';
