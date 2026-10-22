@@ -25,10 +25,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
 
-      - name: Install Locked Dependencies
-        run: npm ci --no-audit --no-fund --legacy-peer-deps
+      - name: Install Dependencies
+        run: rm -f bun.lock package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps
 
       - name: Execute ASRP-1.0 DMZ Constitutional Verifier
         env:

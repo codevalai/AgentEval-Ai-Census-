@@ -14,12 +14,13 @@
     "threat-verify": "tsx scripts/threat-radar-verify.ts",
     "governance-verify": "tsx scripts/governance-rfc-verify.ts",
     "intake-verify": "tsx scripts/verify-community-intake.ts",
+    "ssot-dag-verify": "tsx scripts/ssot-dag-verify.ts",
     "telemetry-export": "tsx scripts/telemetry-sync-export.ts",
     "xerj:hub:list": "tsx scripts/xerj-hub-list.ts",
     "xerj:feedback": "tsx scripts/xerj-feedback.ts --open-pr",
     "trendshift:sweep": "tsx -e \"import { TrendshiftEcosystemHarvester } from './src/services/trendshiftEcosystemHarvester.ts'; (async () => { const h = new TrendshiftEcosystemHarvester(); const res = await h.fetchAndIngestEcosystem('daily', ['python', 'typescript']); console.log('Ecosystem Sweep Complete:', res); })();\"",
     "test:e2e": "tsx src/agents/__tests__/sovereign-e2e.test.ts",
-    "verify:all": "tsc --noEmit && tsx scripts/verify-community-intake.ts && tsx src/agents/__tests__/sovereign-e2e.test.ts && tsx scripts/replay-verify.ts && tsx scripts/threat-radar-verify.ts && tsx scripts/governance-rfc-verify.ts && tsx scripts/telemetry-sync-export.ts"
+    "verify:all": "tsc --noEmit && tsx scripts/ssot-dag-verify.ts && tsx scripts/verify-community-intake.ts && tsx src/agents/__tests__/sovereign-e2e.test.ts && tsx scripts/replay-verify.ts && tsx scripts/threat-radar-verify.ts && tsx scripts/governance-rfc-verify.ts && tsx scripts/telemetry-sync-export.ts"
   },
   "dependencies": {
     "@google/genai": "*",

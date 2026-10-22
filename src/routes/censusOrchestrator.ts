@@ -1,12 +1,13 @@
 import { Router, Request, Response } from 'express';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { AgentRegistrationSchema, TelemetryEventSchema } from '../schemas/census.ts';
+import { defaultOrchestrator } from '../agents/orchestrator.ts';
 
 const router = Router();
-const supabase = createClient(
-  process.env.SUPABASE_URL || 'https://wvhjcxxfslzkechhoolz.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+const supabaseUrl = process.env.SUPABASE_URL || 'https://wvhjcxxfslzkechhoolz.supabase.co';
+const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+const supabase: SupabaseClient | null =
+  supabaseKey.length > 10 ? createClient(supabaseUrl, supabaseKey) : null;
 
 // Register or Update Agent FSM State
 router.post('/agents/register', async (req: Request, res: Response) => {
@@ -17,17 +18,24 @@ router.post('/agents/register', async (req: Request, res: Response) => {
 
   const { agent_name, lifecycle_status, metadata } = parseResult.data;
 
-  const { data, error } = await supabase
-    .from('census_agents')
-    .upsert({ agent_name, lifecycle_status, metadata }, { onConflict: 'agent_name' })
-    .select()
-    .single();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('census_agents')
+      .upsert({ agent_name, lifecycle_status, metadata }, { onConflict: 'agent_name' })
+      .select()
+      .single();
 
-  if (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    if (!error && data) {
+      return res.status(201).json({ success: true, agent: data });
+    }
   }
 
-  return res.status(201).json({ success: true, agent: data });
+  try {
+    const fallbackAgent = await defaultOrchestrator.registerAgent(parseResult.data);
+    return res.status(201).json({ success: true, agent: fallbackAgent });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err?.message || 'Registration failed' });
+  }
 });
 
 // Ingest Telemetry Event with Merkle Witness Check
@@ -54,17 +62,30 @@ router.post('/telemetry', async (req: Request, res: Response) => {
     // Local daemon offline, fallback to standard persistence
   }
 
-  const { data, error } = await supabase
-    .from('census_telemetry')
-    .insert({ agent_id, event_type, payload, merkle_proof, latency_ms })
-    .select()
-    .single();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('census_telemetry')
+      .insert({ agent_id, event_type, payload, merkle_proof, latency_ms })
+      .select()
+      .single();
 
-  if (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    if (!error && data) {
+      return res.status(200).json({ success: true, reflex_routed: reflexRouted, event: data });
+    }
   }
 
-  return res.status(200).json({ success: true, reflex_routed: reflexRouted, event: data });
+  try {
+    const fallbackEvent = await defaultOrchestrator.logTelemetry({
+      agent_id,
+      metric_type: event_type,
+      payload: { ...payload, merkle_proof, latency_ms },
+      severity: 'INFO',
+    });
+    return res.status(200).json({ success: true, reflex_routed: reflexRouted, event: fallbackEvent });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err?.message || 'Telemetry commit failed' });
+  }
 });
 
 export default router;
+

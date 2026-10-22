@@ -120,7 +120,7 @@ export const SOVEREIGN_300_DISCIPLINES: {
     meta_layer: 'L04_BEHAVIOR_TELEMETRY',
     depends_on: 'DISC_01_AGENT_ORCHESTRATION',
     repos: [
-      'browser-use/browser-use', ' stagehand/stagehand', 'microsoft/playwright', 'puppeteer/puppeteer',
+      'browser-use/browser-use', 'stagehand/stagehand', 'microsoft/playwright', 'puppeteer/puppeteer',
       'mendableai/firecrawl', 'jina-ai/reader', 'unclecode/crawl4ai', 'Skyvern-AI/skyvern',
       'LaVague-AI/LaVague', 'EmergenceAI/Agent-E'
     ]
@@ -182,7 +182,7 @@ export const SOVEREIGN_300_DISCIPLINES: {
     name: 'Synthetic Data Generation & Knowledge Distillation',
     meta_layer: 'L17_SYNTHETIC_DATA_LINEAGE',
     repos: [
-      'argilla-io/distilabel', 'bespokelabsai/curator', ' GretelAI/gretel-synthetics', 'sdv-dev/SDV',
+      'argilla-io/distilabel', 'bespokelabsai/curator', 'GretelAI/gretel-synthetics', 'sdv-dev/SDV',
       'camel-ai/camel', 'Evol-Instruct/Evol-Instruct', 'arcee-ai/mergekit', 'AnswerDotAI/fastdata',
       'NVIDIA/NeMo-Curator', 'EleutherAI/lm-evaluation-harness'
     ]
@@ -236,7 +236,7 @@ export const SOVEREIGN_300_DISCIPLINES: {
     repos: [
       'livekit/agents', 'pipecat-ai/pipecat', 'ten-framework/ten-framework', 'vocodedev/vocode-core',
       'openai/whisper', 'SWivid/F5-TTS', 'fishaudio/fish-speech', 'coqui-ai/TTS',
-      'elevenlabs/elevenlabs-python', ' kyutai-labs/moshi'
+      'elevenlabs/elevenlabs-python', 'kyutai-labs/moshi'
     ]
   },
   {

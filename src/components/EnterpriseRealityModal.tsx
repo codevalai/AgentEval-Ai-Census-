@@ -87,6 +87,7 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
     crossDomainVersatility: 88,
   });
   const [promotionResult, setPromotionResult] = useState<AgentPromotionEvaluation | null>(null);
+  const [promotionBanner, setPromotionBanner] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // Repo Indexer state
   const [cves, setCves] = useState<RepoCVERecord[]>(() => repoIndexerBackend.getCVERecords());
@@ -153,10 +154,17 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
     if (!promotionResult) return;
     try {
       const res = agentRegistryBackend.executePromotion(promotionResult);
-      alert(`Promotion successful! New canonical identity: ${res.newUrn}\nMerkle Proof: ${res.merkleProof}`);
+      setCertificates(agentRegistryBackend.getAllCertificates());
+      setPromotionBanner({
+        type: 'success',
+        message: `Promotion committed! New canonical identity: ${res.newUrn} • Merkle Proof: ${res.merkleProof.slice(0, 24)}...`,
+      });
       setPromotionResult(null);
     } catch (e: any) {
-      alert(`Promotion failed: ${e?.message}`);
+      setPromotionBanner({
+        type: 'error',
+        message: `Promotion failed: ${e?.message || 'Unknown error'}`,
+      });
     }
   };
 
@@ -456,6 +464,24 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
                   <p className="text-[11px] text-gray-600 dark:text-gray-300 mt-2 font-mono">
                     {promotionResult.justification} (Proof: {promotionResult.proofLeaf.slice(0, 16)}...)
                   </p>
+                )}
+
+                {promotionBanner && (
+                  <div
+                    className={`mt-2 p-2 rounded border text-[11px] font-mono flex items-center justify-between ${
+                      promotionBanner.type === 'success'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-300'
+                        : 'bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-300'
+                    }`}
+                  >
+                    <span>{promotionBanner.message}</span>
+                    <button
+                      onClick={() => setPromotionBanner(null)}
+                      className="ml-2 text-[10px] underline opacity-80 hover:opacity-100 cursor-pointer"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
