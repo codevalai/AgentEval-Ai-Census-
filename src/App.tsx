@@ -54,6 +54,7 @@ import { SupabaseOrchestratorConsole } from './components/SupabaseOrchestratorCo
 import { XerjZenithConsole } from './components/XerjZenithConsole.tsx';
 import { OmniscientFactoryMetaLayerConsole } from './components/OmniscientFactoryMetaLayerConsole.tsx';
 import { OmniscientHyperScaleConsole } from './components/OmniscientHyperScaleConsole.tsx';
+import { SovereignGuardrailSpineConsole } from './components/SovereignGuardrailSpineConsole.tsx';
 import {
   INITIAL_STATS,
   INITIAL_REGIONS,
@@ -454,6 +455,9 @@ export default function App() {
 
         {/* Phase 7 ×3 Hyper-Scale Live Wire Engine: 24 Meta-Layers, 15 Swarms, 64 Live APIs, 16 Factory Tiers & Sovereign 300 */}
         <OmniscientHyperScaleConsole />
+
+        {/* Sovereign Guardrail Spine: 7-Layer Defense Map, 6 Agent Capability Profiles, 6 Swarm Drift Rules & PR Guardian */}
+        <SovereignGuardrailSpineConsole />
 
         {/* Omniscient AI Factory Registry (Tiers 1-8 + Dev IDEs), 5 Hyper-Crawler Swarms & 8 Meta-Layers Blueprint */}
         <OmniscientFactoryMetaLayerConsole theme={theme} />

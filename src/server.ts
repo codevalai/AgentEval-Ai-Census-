@@ -13,10 +13,12 @@ import harvesterRouter from './routes/harvester.ts';
 import censusOrchestratorRouter from './routes/censusOrchestrator.ts';
 import { censusLiveRouter } from './routes/census-live-routes.ts';
 import { sovereignSubsystemsRouter } from './routes/missing-subsystems-routes.ts';
+import { guardrailRouter } from './routes/guardrail-routes.ts';
 
 export const app = express();
 app.use(express.json());
 app.use('/api/census', censusLiveRouter);
+app.use('/api/guardrails', guardrailRouter);
 app.use('/api', sovereignSubsystemsRouter);
 app.use('/api', harvesterRouter);
 app.use('/api/v2', censusOrchestratorRouter);
