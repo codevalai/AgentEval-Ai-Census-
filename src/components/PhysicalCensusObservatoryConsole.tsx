@@ -622,9 +622,9 @@ export const PhysicalCensusObservatoryConsole: React.FC<PhysicalCensusObservator
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800 text-[11px]">
-                  {telemetry.map((evt) => (
+                  {telemetry.map((evt, idx) => (
                     <tr
-                      key={evt.eventId}
+                      key={`${evt.eventId}-${idx}`}
                       className={`hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors ${
                         isLight ? 'text-gray-800' : 'text-gray-200'
                       }`}
@@ -824,9 +824,9 @@ export const PhysicalCensusObservatoryConsole: React.FC<PhysicalCensusObservator
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800 text-[11px]">
-                  {agents.map((agent) => (
+                  {agents.map((agent, idx) => (
                     <tr
-                      key={agent.agentId}
+                      key={`${agent.agentId}-${idx}`}
                       className={`hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 transition-colors ${
                         isLight ? 'text-gray-800' : 'text-gray-200'
                       }`}

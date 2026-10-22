@@ -162,7 +162,7 @@ export const TemporalTimeline: React.FC<TemporalTimelineProps> = ({
             </h4>
             <ul className="space-y-2">
               {activeEra.milestones.map((m, idx) => (
-                <li key={idx} className="flex items-start gap-2">
+                <li key={`${activeEra.id}-milestone-${idx}`} className="flex items-start gap-2">
                   <span className="text-blue-500 font-bold shrink-0">•</span>
                   <span className="text-gray-700 dark:text-gray-300">{m}</span>
                 </li>
@@ -182,7 +182,7 @@ export const TemporalTimeline: React.FC<TemporalTimelineProps> = ({
             <div className="flex flex-wrap gap-1.5">
               {activeEra.dominantPlatforms.map((plat, idx) => (
                 <span
-                  key={idx}
+                  key={`${activeEra.id}-plat-${idx}`}
                   className="px-2 py-1 rounded bg-white dark:bg-black/50 border border-gray-300 dark:border-gray-700 font-mono text-[11px] text-gray-800 dark:text-gray-200"
                 >
                   {plat}
@@ -194,7 +194,7 @@ export const TemporalTimeline: React.FC<TemporalTimelineProps> = ({
               <div className="flex flex-wrap gap-1">
                 {activeEra.paradigms.map((p, idx) => (
                   <span
-                    key={idx}
+                    key={`${activeEra.id}-paradigm-${idx}`}
                     className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300"
                   >
                     {p}

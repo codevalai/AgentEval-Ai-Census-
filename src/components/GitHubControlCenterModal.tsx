@@ -348,9 +348,9 @@ export const GitHubControlCenterModal: React.FC<GitHubControlCenterModalProps> =
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-emerald-200/70 dark:border-emerald-900/50">
-                  {repoStatus.nodeRunnerSetup.stepChecks.map((chk) => (
+                  {repoStatus.nodeRunnerSetup.stepChecks.map((chk, idx) => (
                     <div
-                      key={chk.workflowFile}
+                      key={`${chk.workflowFile}-${idx}`}
                       className={`p-2.5 rounded-lg border text-xs font-mono ${
                         isLight ? 'bg-white border-emerald-200' : 'bg-[#081218] border-emerald-900/60'
                       }`}
@@ -415,9 +415,9 @@ export const GitHubControlCenterModal: React.FC<GitHubControlCenterModalProps> =
                 </h4>
 
                 <div className="space-y-2">
-                  {runs.map((r) => (
+                  {runs.map((r, idx) => (
                     <div
-                      key={r.id}
+                      key={`${r.id}-${idx}`}
                       className={`p-3 rounded-lg border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
                         isLight ? 'bg-gray-50 border-gray-200' : 'bg-gray-900/60 border-gray-800'
                       }`}
@@ -584,9 +584,9 @@ export const GitHubControlCenterModal: React.FC<GitHubControlCenterModalProps> =
 
               {/* Recent Attestations List */}
               <div className="space-y-2">
-                {attestations.map((att) => (
+                {attestations.map((att, idx) => (
                   <div
-                    key={att.commitSha}
+                    key={`${att.commitSha}-${idx}`}
                     className={`p-3 rounded-lg border text-xs ${
                       isLight ? 'bg-gray-50 border-gray-200' : 'bg-gray-900/60 border-gray-800'
                     }`}

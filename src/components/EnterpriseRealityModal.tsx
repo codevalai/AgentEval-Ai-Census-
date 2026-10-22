@@ -266,9 +266,9 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {workers.map((w) => (
+                {workers.map((w, idx) => (
                   <div
-                    key={w.workerId}
+                    key={`${w.workerId}-${idx}`}
                     className={`p-3.5 rounded-lg border text-xs ${
                       isLight ? 'bg-gray-50 border-gray-200' : 'bg-gray-900/60 border-gray-800'
                     }`}
@@ -319,8 +319,8 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
                   <p className="text-gray-500 text-[11px]">DLQ is empty. All worker pipelines operating without dropped packets.</p>
                 ) : (
                   <div className="space-y-2">
-                    {dlq.map((item) => (
-                      <div key={item.id} className="p-2 rounded bg-white dark:bg-gray-950 border border-amber-200 dark:border-amber-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    {dlq.map((item, idx) => (
+                      <div key={`${item.id}-${idx}`} className="p-2 rounded bg-white dark:bg-gray-950 border border-amber-200 dark:border-amber-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div>
                           <div className="font-mono font-bold text-red-600 dark:text-red-400">{item.failureReason}</div>
                           <div className="text-[10px] text-gray-400 font-mono truncate max-w-lg mt-0.5">
@@ -356,9 +356,9 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
 
               {/* Sample Attestations */}
               <div className="space-y-2">
-                {certificates.map((cert) => (
+                {certificates.map((cert, idx) => (
                   <div
-                    key={cert.agentUrn}
+                    key={`${cert.agentUrn}-${idx}`}
                     className={`p-3 rounded-lg border text-xs ${
                       isLight ? 'bg-gray-50 border-gray-200' : 'bg-gray-900/60 border-gray-800'
                     }`}
@@ -487,9 +487,9 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
               )}
 
               <div className="space-y-2">
-                {cves.map((cve) => (
+                {cves.map((cve, idx) => (
                   <div
-                    key={cve.cveId}
+                    key={`${cve.cveId}-${idx}`}
                     className={`p-3 rounded-lg border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
                       isLight ? 'bg-gray-50 border-gray-200' : 'bg-gray-900/60 border-gray-800'
                     }`}
@@ -548,9 +548,9 @@ export const EnterpriseRealityModal: React.FC<EnterpriseRealityModalProps> = ({
 
               {/* Invariant Evaluation Proofs */}
               <div className="space-y-2">
-                {governanceEval.evaluations.map((ev) => (
+                {governanceEval.evaluations.map((ev, idx) => (
                   <div
-                    key={ev.rfc}
+                    key={`${ev.rfc}-${idx}`}
                     className={`p-3 rounded-lg border text-xs ${
                       isLight ? 'bg-gray-50 border-gray-200' : 'bg-gray-900/60 border-gray-800'
                     }`}

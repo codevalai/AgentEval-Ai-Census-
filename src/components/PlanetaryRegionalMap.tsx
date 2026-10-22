@@ -673,7 +673,7 @@ const VectorMeshView: React.FC<VectorMeshViewProps> = ({
 
           return (
             <line
-              key={`beam-${idx}`}
+              key={`beam-${idA}-${idB}-${idx}`}
               x1={pA.x}
               y1={pA.y}
               x2={pB.x}

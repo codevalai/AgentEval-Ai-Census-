@@ -32,7 +32,7 @@ export const LiveEventFeed: React.FC<LiveEventFeedProps> = ({ events, theme }) =
         </div>
 
         <div className="flex-1 overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-6 text-[11px] font-mono">
-          {events.map((evt) => {
+          {events.map((evt, idx) => {
             let icon = <Sparkles className="w-3.5 h-3.5 text-blue-500 shrink-0 inline mr-1" />;
             if (evt.type === 'DEFENSE') {
               icon = <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0 inline mr-1" />;
@@ -43,7 +43,7 @@ export const LiveEventFeed: React.FC<LiveEventFeedProps> = ({ events, theme }) =
             }
 
             return (
-              <div key={evt.id} className="inline-flex items-center gap-1.5 shrink-0">
+              <div key={`${evt.id}-${idx}`} className="inline-flex items-center gap-1.5 shrink-0">
                 {icon}
                 <span className="font-semibold text-gray-900 dark:text-gray-100">
                   {evt.title}

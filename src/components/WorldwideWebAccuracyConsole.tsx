@@ -1034,7 +1034,7 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
                 <div className="flex flex-wrap gap-2">
                   {groundingResult.citations.map((cit, i) => (
                     <a
-                      key={i}
+                      key={`${cit.uri}-${i}`}
                       href={cit.uri}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1057,7 +1057,7 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                   {sweepData.liveDiscourseStream.map((story, idx) => (
                     <a
-                      key={idx}
+                      key={`${story.url}-${idx}`}
                       href={story.url}
                       target="_blank"
                       rel="noopener noreferrer"

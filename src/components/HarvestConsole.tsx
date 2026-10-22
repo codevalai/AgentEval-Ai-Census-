@@ -211,7 +211,7 @@ export const HarvestConsole: React.FC<HarvestConsoleProps> = ({
 
             return (
               <div
-                key={src.id}
+                key={`${src.id}-${idx}`}
                 className={`p-3 rounded-md border transition-all ${
                   isActive
                     ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/20'
@@ -271,9 +271,9 @@ export const HarvestConsole: React.FC<HarvestConsoleProps> = ({
           </div>
 
           <div className="space-y-1">
-            {harvestLogs.map((log) => (
+            {harvestLogs.map((log, idx) => (
               <div
-                key={log.id}
+                key={`${log.id}-${idx}`}
                 className="flex items-center justify-between font-mono text-[11px] py-1 px-2 rounded bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <div className="flex items-center gap-2 truncate">

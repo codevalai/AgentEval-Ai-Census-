@@ -436,7 +436,7 @@ export const Planetary75PercentCensusConsole: React.FC<Planetary75PercentCensusC
                     <div className="flex flex-wrap gap-1">
                       {seg.representativeNodes.slice(0, 3).map((node, i) => (
                         <span
-                          key={i}
+                          key={`${seg.id}-${node}-${i}`}
                           className="px-1.5 py-0.5 rounded text-[10px] bg-gray-200/60 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                         >
                           {node}
