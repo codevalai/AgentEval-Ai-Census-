@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * PART II: RUNTIME VALIDATION SCHEMAS (src/schemas/census.ts)
- * Strict runtime data contracts using Zod for Sovereign Infinity AI Census.
+ * Strict runtime data contracts using Zod for Sovereign Infinity AI Census,
+ * including ExternalFeed, Developer AI Factories, KnowledgeSource, RepoNode,
+ * EndpointNode, Hyper-Crawler Swarms, and the 8 Sovereign Meta-Layers.
  */
 
 import { z } from 'zod';
@@ -32,10 +34,147 @@ export const TelemetryPayloadSchema = z.object({
   severity: SeverityEnum.default('INFO'),
 });
 
+// ============================================================================
+// OMNISCIENT CENSUS & DEVELOPER AI FACTORY SCHEMAS
+// ============================================================================
+
+export const CensusTierEnum = z.enum(['AI', 'AGI', 'ASI', 'APEX']);
+export const TrustLevelEnum = z.enum(['attested', 'inferred', 'unknown']);
+
+export const ExternalFeedTypeEnum = z.enum([
+  'cloudai',
+  'devaifactory',
+  'container',
+  'serverless',
+  'iot',
+  'robotics',
+  'vehicle',
+  'vectordb',
+  'messagebus',
+  'cifactory',
+  'p2pmesh',
+  'desktopagent',
+  'saas_ai',
+]);
+
+export const DevAgentTypeEnum = z.enum([
+  'coding_agent',
+  'debug_agent',
+  'refactor_agent',
+  'test_agent',
+  'deploy_agent',
+  'infra_agent',
+  'doc_agent',
+  'memory_agent',
+  'autofix_agent',
+]);
+
+export const ModelBackendEnum = z.enum([
+  'openai',
+  'anthropic',
+  'mistral',
+  'azure',
+  'google_gemini',
+  'local_llm',
+  'custom',
+]);
+
+export const AgentCountBreakdownSchema = z.object({
+  hard: z.number().int().nonnegative(),
+  inferred: z.number().int().nonnegative(),
+  speculative: z.number().int().nonnegative(),
+});
+
+export const DevFactoryProductSchema = z.object({
+  name: z.string().min(1),
+  agent_types: z.array(DevAgentTypeEnum),
+  model_backends: z.array(ModelBackendEnum),
+});
+
+export const ExternalFeedSchema = z.object({
+  id: z.string().min(2),
+  name: z.string().min(2),
+  module_path: z.string().min(2),
+  type: ExternalFeedTypeEnum,
+  vendor: z.string().min(1),
+  jurisdiction: z.string().default('US-Global'),
+  factory_lineage: z.string().default('Foundational'),
+  products: z.array(DevFactoryProductSchema).optional(),
+  capabilities: z.array(z.string()),
+  agent_count: AgentCountBreakdownSchema,
+  tier: CensusTierEnum,
+  trust_level: TrustLevelEnum,
+  health_status: z.enum(['HEALTHY', 'DEGRADED', 'PROBING']).default('HEALTHY'),
+  last_updated: z.string(),
+});
+
+export const KnowledgeSourceSchema = z.object({
+  id: z.string().min(2),
+  name: z.string().min(2),
+  type: z.enum(['docs', 'repo', 'wiki', 'spec']),
+  host: z.enum(['github', 'gitlab', 'bitbucket', 'docs_site', 'wiki']),
+  url: z.string().url(),
+  domain: z.string(),
+  topics: z.array(z.string()),
+  used_by_factories: z.array(z.string()),
+  last_updated: z.string(),
+});
+
+export const RepoNodeSchema = z.object({
+  id: z.string().min(2),
+  host: z.enum(['github', 'gitlab', 'bitbucket', 'codeberg', 'self_hosted']),
+  owner: z.string().min(1),
+  name: z.string().min(1),
+  url: z.string().url(),
+  stars: z.number().int().nonnegative(),
+  forks: z.number().int().nonnegative(),
+  topics: z.array(z.string()),
+  is_factory: z.boolean(),
+  factory_type: z.enum(['model', 'agent', 'infra', 'tooling', 'data']),
+  linked_factories: z.array(z.string()),
+  last_commit: z.string(),
+});
+
+export const EndpointNodeSchema = z.object({
+  id: z.string().min(2),
+  name: z.string().min(2),
+  host_type: z.enum(['cloud', 'self_hosted', 'edge']),
+  provider: z.string().min(1),
+  url: z.string(),
+  protocol: z.enum(['http', 'grpc', 'ws']),
+  capabilities: z.array(z.enum(['llm', 'embedding', 'image', 'audio', 'agent', 'control', 'memory'])),
+  tier: CensusTierEnum,
+  auth_type: z.enum(['api_key', 'oauth', 'none', 'mtls']),
+  last_seen: z.string(),
+});
+
+export const SwarmAgentTypeEnum = z.enum([
+  'github_harvester',
+  'cloud_model_catalog_harvester',
+  'docs_harvester',
+  'infra_harvester',
+  'p2p_mesh_harvester',
+]);
+
+export const SwarmTaskSchema = z.object({
+  task_id: z.string(),
+  swarm_type: SwarmAgentTypeEnum,
+  targets: z.array(z.string()),
+  rate_limit_rps: z.number().positive(),
+  respect_robots_txt: z.boolean().default(true),
+  freshness_score: z.number().min(0).max(1),
+  status: z.enum(['IDLE', 'CRAWLING', 'NORMALIZING', 'RECONCILING', 'COMPLETED']),
+});
+
 export type AgentRegistrationInput = z.infer<typeof AgentRegistrationSchema>;
 export type AgentRegistration = AgentRegistrationInput;
 export type TelemetryEventInput = z.infer<typeof TelemetryEventSchema>;
 export type TelemetryPayload = z.infer<typeof TelemetryPayloadSchema>;
+export type ExternalFeed = z.infer<typeof ExternalFeedSchema>;
+export type KnowledgeSource = z.infer<typeof KnowledgeSourceSchema>;
+export type RepoNode = z.infer<typeof RepoNodeSchema>;
+export type EndpointNode = z.infer<typeof EndpointNodeSchema>;
+export type SwarmTask = z.infer<typeof SwarmTaskSchema>;
 
 export const MASTER_MIGRATION_DDL = `
 -- Enable cryptographic extensions

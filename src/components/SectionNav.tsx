@@ -20,6 +20,7 @@ export const SectionNav: React.FC<SectionNavProps> = ({
   const [navMode, setNavMode] = useState<'pillars' | 'taxonomy'>('pillars');
 
   const coreSections = [
+    { id: 'omniscient-factory-meta-console', label: '🏭 Omniscient AI Factory Registry (Tiers 1–8 + Dev IDEs) • 5 Hyper-Crawler Swarms • 8 Meta-Layers', highlight: true },
     { id: 'worldwide-web-accuracy-console', label: '🌐 WWO-1.0: Worldwide Web Live AI Triangulation (21 Live APIs • 24 Web Platforms • ±0.42% Kalman CI)', highlight: true },
     { id: 'supabase-orchestrator-console', label: '⚡ Supabase & Autonomous Orchestrator (wvhjcxxfslzkechhoolz • Zod Schemas • RLS PostgreSQL)', highlight: true },
     { id: 'xerj-zenith-console', label: '🔥 XERJ Sovereign Zenith (Corpus Hub Grade AAA • System-1 /_decide • Second-Brain Graph • SSE)', highlight: true },

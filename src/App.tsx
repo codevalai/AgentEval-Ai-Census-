@@ -52,6 +52,7 @@ import { ExascaleSubAtomicConsole } from './components/ExascaleSubAtomicConsole.
 import { WorldwideWebAccuracyConsole } from './components/WorldwideWebAccuracyConsole.tsx';
 import { SupabaseOrchestratorConsole } from './components/SupabaseOrchestratorConsole.tsx';
 import { XerjZenithConsole } from './components/XerjZenithConsole.tsx';
+import { OmniscientFactoryMetaLayerConsole } from './components/OmniscientFactoryMetaLayerConsole.tsx';
 import {
   INITIAL_STATS,
   INITIAL_REGIONS,
@@ -449,6 +450,9 @@ export default function App() {
 
         {/* Dual Horizon Panels: Today vs This Year */}
         <HorizonPanels stats={stats} theme={theme} />
+
+        {/* Omniscient AI Factory Registry (Tiers 1-8 + Dev IDEs), 5 Hyper-Crawler Swarms & 8 Meta-Layers Blueprint */}
+        <OmniscientFactoryMetaLayerConsole theme={theme} />
 
         {/* WWO-1.0: Worldwide Web Live AI Platform Triangulation & Bayesian Accuracy Engine */}
         <WorldwideWebAccuracyConsole stats={stats} theme={theme} />
