@@ -762,9 +762,9 @@ export const WorkspaceHub: React.FC<WorkspaceHubProps> = ({ theme }) => {
                   </div>
                 ) : (
                   <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
-                    {messages.map((msg) => (
+                    {messages.map((msg, idx) => (
                       <div
-                        key={msg.id}
+                        key={`${msg.id}-${idx}`}
                         className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 transition-all text-xs"
                       >
                         <div className="flex items-start justify-between gap-2 mb-1">
@@ -905,9 +905,9 @@ export const WorkspaceHub: React.FC<WorkspaceHubProps> = ({ theme }) => {
                   </div>
                 ) : (
                   <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
-                    {docsList.map((doc) => (
+                    {docsList.map((doc, idx) => (
                       <div
-                        key={doc.id}
+                        key={`${doc.id}-${idx}`}
                         className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 transition-all text-xs flex items-center justify-between"
                       >
                         <div className="min-w-0 mr-2">
@@ -1033,9 +1033,9 @@ export const WorkspaceHub: React.FC<WorkspaceHubProps> = ({ theme }) => {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[220px] overflow-y-auto pr-1">
-              {sqlAgents.map((ag: any) => (
+              {sqlAgents.map((ag: any, idx: number) => (
                 <div
-                  key={ag.spiffe_id || ag.id}
+                  key={`${ag.spiffe_id || ag.id}-${idx}`}
                   className="p-2.5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 text-xs flex items-center justify-between gap-2"
                 >
                   <div className="truncate">
@@ -1078,9 +1078,9 @@ export const WorkspaceHub: React.FC<WorkspaceHubProps> = ({ theme }) => {
                 </div>
               ) : (
                 <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
-                  {dbRecords.map((rec) => (
+                  {dbRecords.map((rec, idx) => (
                     <div
-                      key={rec.id}
+                      key={`${rec.id}-${idx}`}
                       className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-xs space-y-1"
                     >
                       <div className="flex items-center justify-between">
@@ -1243,9 +1243,9 @@ export const WorkspaceHub: React.FC<WorkspaceHubProps> = ({ theme }) => {
                 </div>
               ) : (
                 <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
-                  {firestoreEvents.map((evt) => (
+                  {firestoreEvents.map((evt, idx) => (
                     <div
-                      key={evt.id}
+                      key={`${evt.id}-${idx}`}
                       className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 transition-all text-xs font-mono space-y-1"
                     >
                       <div className="flex items-center justify-between text-slate-400 text-[10px]">

@@ -70,6 +70,20 @@ interface TelemetryRecord {
   timestamp: string;
 }
 
+function dedupeTelemetryRecords(records: TelemetryRecord[]): TelemetryRecord[] {
+  const seen = new Set<string>();
+  const out: TelemetryRecord[] = [];
+  for (const r of records) {
+    if (!r || !r.record_id) continue;
+    if (seen.has(r.record_id)) continue;
+    seen.add(r.record_id);
+    out.push(r);
+  }
+  return out;
+}
+
+let autoRecordSeq = 0;
+
 export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, stats }) => {
   const isLight = theme === 'worldometers';
   const [activeTab, setActiveTab] = useState<ZenithTab>('ROUTING_SYSTEM1');
@@ -77,7 +91,7 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
   // SSE & Telemetry State pre-seeded with 4 Genesis Merkle events
   const [sseConnected, setSseConnected] = useState(true);
   const [liveStreamEvents, setLiveStreamEvents] = useState<TelemetryRecord[]>(() =>
-    sovereignCyberneticBus.getRecentEvents()
+    dedupeTelemetryRecords(sovereignCyberneticBus.getRecentEvents())
   );
 
   // Health & Stats State
@@ -128,7 +142,7 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
   // Subscribe to Cybernetic Event Bus for cross-pillar telemetry (WWO-1.0 sweeps, Threat Radar quarantines, etc.)
   useEffect(() => {
     const unsub = sovereignCyberneticBus.subscribe((evt) => {
-      setLiveStreamEvents((prev) => [evt, ...prev.slice(0, 24)]);
+      setLiveStreamEvents((prev) => dedupeTelemetryRecords([evt, ...prev]).slice(0, 25));
       setTokensSavedTotal((t) => t + (evt.tokens_saved_estimate || 4200));
     });
     return unsub;
@@ -147,9 +161,10 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
       const chosenAgent = agents[Math.floor(Math.random() * agents.length)];
       const chosenStage = stages[Math.floor(Math.random() * stages.length)];
       const hex = Math.random().toString(16).substring(2, 10).toUpperCase();
+      autoRecordSeq += 1;
 
       const newEvent: TelemetryRecord = {
-        record_id: `rec-auto-${Date.now()}`,
+        record_id: `rec-auto-${Date.now()}-${autoRecordSeq}`,
         agent_id: chosenAgent,
         stage: chosenStage,
         decision_tier: 'XERJ_LOCAL_SYSTEM1',
@@ -163,7 +178,7 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
         timestamp: new Date().toISOString(),
       };
 
-      setLiveStreamEvents((prev) => [newEvent, ...prev.slice(0, 24)]);
+      setLiveStreamEvents((prev) => dedupeTelemetryRecords([newEvent, ...prev]).slice(0, 25));
       setTokensSavedTotal((t) => t + 4200);
     }, 4500);
 
@@ -179,7 +194,7 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
       es.addEventListener('telemetry', (e) => {
         try {
           const parsed = JSON.parse(e.data);
-          setLiveStreamEvents((prev) => [parsed, ...prev.slice(0, 24)]);
+          setLiveStreamEvents((prev) => dedupeTelemetryRecords([parsed, ...prev]).slice(0, 25));
           setTokensSavedTotal((t) => t + (parsed.tokens_saved_estimate || 4200));
         } catch {
           // Ignore
@@ -202,8 +217,8 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
       if (res.ok) {
         const d = await res.json();
         setHealthData(d);
-        if (Array.isArray(d.recentRecords)) {
-          setLiveStreamEvents(d.recentRecords);
+        if (Array.isArray(d.recentRecords) && d.recentRecords.length > 0) {
+          setLiveStreamEvents((prev) => dedupeTelemetryRecords([...d.recentRecords, ...prev]).slice(0, 25));
         }
       }
     } catch {
@@ -233,7 +248,7 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
       const data = await res.json();
       setRoutingResult(data);
       if (data.record) {
-        setLiveStreamEvents((prev) => [data.record, ...prev.slice(0, 19)]);
+        setLiveStreamEvents((prev) => dedupeTelemetryRecords([data.record, ...prev]).slice(0, 25));
         setTokensSavedTotal((t) => t + (data.record.tokens_saved_estimate || 4200));
       }
     } catch (err: any) {
@@ -269,7 +284,7 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
 
   const handleTransitionFsm = async () => {
     if (!currentLease) {
-      alert('Please acquire lease first.');
+      setFsmLog((l) => ['[FSM NOTICE] Please acquire a lease lock before transitioning state.', ...l]);
       return;
     }
     try {
@@ -550,9 +565,9 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
             </div>
 
             <div className="space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
-              {liveStreamEvents.map((evt) => (
+              {liveStreamEvents.map((evt, idx) => (
                 <div
-                  key={evt.record_id}
+                  key={`${evt.record_id}-${idx}`}
                   className={`p-3 rounded-xl border text-xs font-mono transition-all ${
                     isLight
                       ? 'bg-white border-gray-200 hover:border-amber-400'
@@ -665,8 +680,8 @@ export const XerjZenithConsole: React.FC<XerjZenithConsoleProps> = ({ theme, sta
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800/50">
-                  {XERJ_CORPUS_HUB_CATALOG.map((pack) => (
-                    <tr key={pack.packId} className="hover:bg-amber-500/5 transition-colors">
+                  {XERJ_CORPUS_HUB_CATALOG.map((pack, idx) => (
+                    <tr key={`${pack.packId}-${idx}`} className="hover:bg-amber-500/5 transition-colors">
                       <td className="py-2.5 pr-3">
                         <div className="font-bold text-cyan-400">{pack.packId}</div>
                         <div className="text-[10px] text-gray-500 truncate max-w-xs">{pack.description}</div>

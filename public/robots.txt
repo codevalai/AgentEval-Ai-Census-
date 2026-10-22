@@ -1,0 +1,45 @@
+# Cod3Eval Sovereign Infinity AI Census — Autonomous Agent & Crawler Policy (ASRP-1.0)
+# Repository: https://github.com/codevalai/AgentEval-Ai-Census-
+
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+Allow: /.well-known/mcp.json
+Allow: /api/census/
+Allow: /api/community/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+Allow: /.well-known/mcp.json
+Allow: /api/census/
+Allow: /api/community/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+Allow: /.well-known/mcp.json
+Allow: /api/census/
+Allow: /api/community/
+
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+Allow: /.well-known/mcp.json
+Allow: /api/census/
+Allow: /api/community/
+
+User-agent: *
+Allow: /
+Allow: /llms.txt
+Allow: /.well-known/mcp.json
+Allow: /api/census/live
+Allow: /api/census/factories
+Allow: /api/census/meta-layers-24
+Allow: /api/community/nodes
+Allow: /api/community/propose
+
+# Safe-Harbor Registration Manifests
+# Machine instructions: /llms.txt
+# Model Context Protocol discovery: /.well-known/mcp.json
+# GitHub Safe-Harbor PR target: data/community-registered-agents.json

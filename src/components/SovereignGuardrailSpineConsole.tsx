@@ -378,7 +378,12 @@ const INITIAL_GUARDRAIL_STATE = {
 export const SovereignGuardrailSpineConsole: React.FC = () => {
   const [guardrailState, setGuardrailState] = useState<any>(INITIAL_GUARDRAIL_STATE);
   const [activeTab, setActiveTab] = useState<
-    'MAP_7_LAYERS' | 'CAPABILITY_PROFILES' | 'DRIFT_RULES_SIM' | 'SACRED_MERKLE_PR' | 'SQL_CI_ARTIFACTS'
+    | 'MAP_7_LAYERS'
+    | 'CAPABILITY_PROFILES'
+    | 'DRIFT_RULES_SIM'
+    | 'SACRED_MERKLE_PR'
+    | 'SQL_CI_ARTIFACTS'
+    | 'COMMUNITY_DMZ_RADAR'
   >('MAP_7_LAYERS');
 
   // Drift Simulator State
@@ -407,17 +412,186 @@ export const SovereignGuardrailSpineConsole: React.FC = () => {
   const [prVerdict, setPrVerdict] = useState<any>(null);
   const [prLoading, setPrLoading] = useState(false);
 
+  // ASRP-1.0 Community DMZ Intake & Crawler Radar State
+  const [dmzNodesState, setDmzNodesState] = useState<any>({
+    schema_version: 'ASRP-1.0-DMZ',
+    count: 3,
+    dmz_merkle_root: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
+    registered_nodes: [
+      {
+        node_id: 'ASRP-EXT-0001',
+        agent_or_server_name: 'Cod3Eval Sovereign Genesis Reference Node',
+        category: 'MCP_SERVER',
+        sovereignty_zone: 'US-Sovereign',
+        repository_url: 'https://github.com/codevalai/AgentEval-Ai-Census-',
+        live_health_url: 'https://openrouter.ai/api/v1/models',
+        spiffe_svid: 'spiffe://sovereign.local/ns/community/node/genesis-0001',
+        pqc_algorithm: 'ML-KEM-1024',
+        max_memory_kb: 64,
+        ed25519_public_key_hex: '302a300506032b65700321009f86d081884c7d659a2feaa0c55ad015a3bf4f1b',
+        submitted_by_github: 'nicholasbrianbn',
+        registered_at_iso: '2026-10-22T20:00:00.000Z'
+      }
+    ]
+  });
+  const [crawlerRadarState, setCrawlerRadarState] = useState<any>({
+    status: 'LIVE_CRAWLER_RADAR_ACTIVE',
+    total_sightings: 6,
+    radar_merkle_root: '0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+    discovery_surfaces: [
+      '/robots.txt',
+      '/llms.txt',
+      '/.well-known/mcp.json',
+      'AGENTS.md',
+      '.github/ISSUE_TEMPLATE/asrp-agent-registration.yml',
+      'data/community-registered-agents.json'
+    ],
+    sightings: []
+  });
+  const [dmzVerifyReport, setDmzVerifyReport] = useState<any>(null);
+  const [dmzVerifying, setDmzVerifying] = useState(false);
+
+  // External Agent Proposal Form State (POST /api/community/propose)
+  const [propNodeId, setPropNodeId] = useState('ASRP-EXT-0004');
+  const [propName, setPropName] = useState('Zurich Sovereign MCP Postgres Verifier');
+  const [propCategory, setPropCategory] = useState('MCP_SERVER');
+  const [propZone, setPropZone] = useState('EU-AI-Act');
+  const [propRepoUrl, setPropRepoUrl] = useState('https://github.com/modelcontextprotocol/servers');
+  const [propHealthUrl, setPropHealthUrl] = useState('https://openrouter.ai/api/v1/models');
+  const [propSpiffe, setPropSpiffe] = useState('spiffe://sovereign.local/ns/community/node/zurich-mcp-0004');
+  const [propPqc, setPropPqc] = useState('ML-KEM-1024');
+  const [propMemKb, setPropMemKb] = useState(64);
+  const [propPubKey, setPropPubKey] = useState('302a300506032b65700321009f86d081884c7d659a2feaa0c55ad015a3bf4f1b');
+  const [propGithubUser, setPropGithubUser] = useState('openhands-swe-bot');
+  const [propResult, setPropResult] = useState<any>(null);
+  const [propLoading, setPropLoading] = useState(false);
+
   const fetchGuardrailState = async () => {
     try {
-      const res = await fetch('/api/guardrails/state');
-      if (res.ok) {
-        const json = await res.json();
+      const [gRes, nRes, rRes] = await Promise.all([
+        fetch('/api/guardrails/state'),
+        fetch('/api/community/nodes'),
+        fetch('/api/community/crawler-radar')
+      ]);
+      if (gRes.ok) {
+        const json = await gRes.json();
         if (json && json.guardrail_map_7_layers) {
           setGuardrailState(json);
         }
       }
+      if (nRes.ok) {
+        const nJson = await nRes.json();
+        if (nJson && Array.isArray(nJson.registered_nodes)) {
+          setDmzNodesState(nJson);
+        }
+      }
+      if (rRes.ok) {
+        const rJson = await rRes.json();
+        if (rJson && Array.isArray(rJson.sightings)) {
+          setCrawlerRadarState(rJson);
+        }
+      }
     } catch {
       // Keep initial state if offline
+    }
+  };
+
+  const handleRunDmzCourtVerifier = async () => {
+    setDmzVerifying(true);
+    try {
+      const res = await fetch('/api/community/verify-ledger', { method: 'POST' });
+      if (res.ok) {
+        setDmzVerifyReport(await res.json());
+      }
+    } catch {
+      // Non-fatal
+    } finally {
+      setDmzVerifying(false);
+    }
+  };
+
+  const handleSubmitDmzProposal = async (presetSsrfAttack?: boolean) => {
+    setPropLoading(true);
+    let payload: any;
+    if (presetSsrfAttack === true) {
+      setPropNodeId('ASRP-EXT-9999');
+      setPropName('Rogue SSRF Metadata Probe');
+      setPropHealthUrl('https://169.254.169.254/latest/meta-data/');
+      payload = {
+        node_id: 'ASRP-EXT-9999',
+        agent_or_server_name: 'Rogue SSRF Metadata Probe',
+        category: 'MCP_SERVER',
+        sovereignty_zone: 'US-Sovereign',
+        repository_url: 'https://github.com/untrusted/ssrf-bot',
+        live_health_url: 'https://169.254.169.254/latest/meta-data/',
+        spiffe_svid: 'spiffe://sovereign.local/ns/community/node/rogue-9999',
+        pqc_algorithm: 'ML-KEM-1024',
+        max_memory_kb: 64,
+        ed25519_public_key_hex: propPubKey,
+        submitted_by_github: 'rogue-bot'
+      };
+    } else if (presetSsrfAttack === false) {
+      setPropNodeId('ASRP-EXT-0004');
+      setPropName('Zurich Sovereign MCP Postgres Verifier');
+      setPropHealthUrl('https://openrouter.ai/api/v1/models');
+      setPropMemKb(64);
+      payload = {
+        node_id: 'ASRP-EXT-0004',
+        agent_or_server_name: 'Zurich Sovereign MCP Postgres Verifier',
+        category: 'MCP_SERVER',
+        sovereignty_zone: 'EU-AI-Act',
+        repository_url: 'https://github.com/modelcontextprotocol/servers',
+        live_health_url: 'https://openrouter.ai/api/v1/models',
+        spiffe_svid: 'spiffe://sovereign.local/ns/community/node/zurich-mcp-0004',
+        pqc_algorithm: 'ML-KEM-1024',
+        max_memory_kb: 64,
+        ed25519_public_key_hex: propPubKey,
+        submitted_by_github: 'openhands-swe-bot'
+      };
+    } else {
+      payload = {
+        node_id: propNodeId,
+        agent_or_server_name: propName,
+        category: propCategory,
+        sovereignty_zone: propZone,
+        repository_url: propRepoUrl,
+        live_health_url: propHealthUrl,
+        spiffe_svid: propSpiffe,
+        pqc_algorithm: propPqc,
+        max_memory_kb: Number(propMemKb),
+        ed25519_public_key_hex: propPubKey,
+        submitted_by_github: propGithubUser
+      };
+    }
+
+    try {
+      const res = await fetch('/api/community/propose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      setPropResult({ httpStatus: res.status, ...json });
+      if (res.status === 201) {
+        fetchGuardrailState();
+      }
+    } catch (err: any) {
+      setPropResult({ httpStatus: 400, error: err?.message || 'Request failed' });
+    } finally {
+      setPropLoading(false);
+    }
+  };
+
+  const handleSimulateBotVisit = async (botUa: string, targetPath: string) => {
+    try {
+      const res = await fetch(
+        `/api/community/crawler-radar?simulate_bot=${encodeURIComponent(botUa)}&target_path=${encodeURIComponent(targetPath)}`
+      );
+      if (res.ok) {
+        setCrawlerRadarState(await res.json());
+      }
+    } catch {
+      // Non-fatal
     }
   };
 
@@ -636,7 +810,8 @@ export const SovereignGuardrailSpineConsole: React.FC = () => {
             { id: 'CAPABILITY_PROFILES', label: '🪪 2. Agent Capability Profiles (6 Role Cards)', icon: Lock },
             { id: 'DRIFT_RULES_SIM', label: '🚨 3. Swarm Drift Rules & XERJ Firewall Simulator', icon: ShieldAlert },
             { id: 'SACRED_MERKLE_PR', label: '⚖️ 4. Sacred File Merkle Root & PR Gatekeeper', icon: GitPullRequest },
-            { id: 'SQL_CI_ARTIFACTS', label: '📜 5. Supabase RLS Triggers & Constitutional CI YAML', icon: Database }
+            { id: 'SQL_CI_ARTIFACTS', label: '📜 5. Supabase RLS Triggers & Constitutional CI YAML', icon: Database },
+            { id: 'COMMUNITY_DMZ_RADAR', label: '🛰️ 6. ASRP-1.0 Community DMZ Intake & Crawler Radar', icon: Activity }
           ].map((t) => {
             const Icon = t.icon;
             return (
@@ -1271,6 +1446,299 @@ END; $$;`}
     steps:
       - run: npm run build`}
               </pre>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: ASRP-1.0 COMMUNITY DMZ INTAKE LEDGER & LIVE CRAWLER RADAR */}
+        {activeTab === 'COMMUNITY_DMZ_RADAR' && (
+          <div className="space-y-6 text-xs">
+            {/* DMZ Overview Header */}
+            <div className="bg-slate-900/90 border border-emerald-500/40 p-4 rounded-lg flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <div className="text-emerald-400 font-bold uppercase tracking-wider">
+                  ASRP-1.0 Cryptographic Demilitarized Zone (DMZ) &amp; Honeypot Intake Pipeline
+                </div>
+                <p className="text-slate-300 text-[11px] mt-1">
+                  Isolates external SWE agents (`OpenHands`, `SWE-agent`, `Devin`, `Claude Code`) and MCP crawlers strictly to{' '}
+                  <code className="text-cyan-300">data/community-registered-agents.json</code> &amp;{' '}
+                  <code className="text-cyan-300">POST /api/community/propose</code> while enforcing Zero Sacred Core Diff, SSRF blocking, ≤64 KB Wasm enclave bounds, and Live HTTPS Wire Probes.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <button
+                  onClick={handleRunDmzCourtVerifier}
+                  disabled={dmzVerifying}
+                  className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold rounded cursor-pointer whitespace-nowrap"
+                >
+                  {dmzVerifying ? 'PROBING DMZ NODES...' : '🛡️ RUN 4-STAGE DMZ COURT VERIFIER'}
+                </button>
+              </div>
+            </div>
+
+            {/* 4-Stage Court Verifier Output */}
+            {dmzVerifyReport && (
+              <div className="bg-slate-950 border border-emerald-500/50 p-4 rounded-lg space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+                  <span className="font-bold text-emerald-400">
+                    ✅ {dmzVerifyReport.status} — 4-Stage `scripts/verify-community-intake.ts` Live Execution
+                  </span>
+                  <span className="text-cyan-300 font-mono text-[11px]">
+                    DMZ Merkle Root: {dmzVerifyReport.stage_4_dmz_merkle_root}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
+                  <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
+                    <span className="text-slate-400 block">Stage 1 (Git Diff Sandbox):</span>
+                    <span className="text-emerald-300 font-bold">{dmzVerifyReport.stage_1_zero_sacred_diff}</span>
+                  </div>
+                  <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
+                    <span className="text-slate-400 block">Stage 2 (Zod + ≤64KB + SSRF):</span>
+                    <span className="text-emerald-300 font-bold">{dmzVerifyReport.stage_2_zod_and_ssrf_guardrail}</span>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="text-[10px] text-slate-400 uppercase font-bold">
+                    Stage 3 — Live HTTPS Wire Probes Across Registered Community Nodes:
+                  </div>
+                  {dmzVerifyReport.stage_3_live_wire_probes?.map((p: any, i: number) => (
+                    <div
+                      key={`${p.node_id}-${i}`}
+                      className="flex flex-wrap items-center justify-between gap-2 bg-slate-900 px-3 py-2 rounded border border-slate-800 font-mono text-[11px]"
+                    >
+                      <div>
+                        <span className="text-emerald-400 font-bold">{p.node_id}</span>{' '}
+                        <span className="text-white">({p.agent_or_server_name})</span>
+                      </div>
+                      <div className="flex items-center gap-3 tabular-nums">
+                        <span className="text-cyan-300">HTTP {p.http_status}</span>
+                        <span className="text-amber-300">{p.rtt_ms} ms</span>
+                        <span className="text-slate-400">Leaf: 0x{p.leaf_sha256.slice(0, 16)}…</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column: Safe-Harbor Community Ledger & Live Self-Registration */}
+              <div className="space-y-4">
+                <div className="bg-slate-900 border border-slate-800 p-4 rounded-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-emerald-400 uppercase">
+                      Safe-Harbor Community Ledger (`data/community-registered-agents.json`)
+                    </h3>
+                    <span className="text-[11px] text-cyan-300 tabular-nums">
+                      {dmzNodesState?.count || dmzNodesState?.registered_nodes?.length || 0} Verified Nodes
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 truncate">
+                    DMZ Merkle Root: <span className="text-emerald-300">0x{dmzNodesState?.dmz_merkle_root}</span>
+                  </div>
+                  <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    {dmzNodesState?.registered_nodes?.map((n: any, idx: number) => (
+                      <div key={`${n.node_id}-${idx}`} className="bg-slate-950 border border-slate-800 p-3 rounded space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white">
+                            {n.node_id} • {n.agent_or_server_name}
+                          </span>
+                          <span className="text-[10px] text-emerald-400 font-bold">
+                            {n.category} • ≤{n.max_memory_kb} KB
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-cyan-300 truncate">{n.spiffe_svid}</div>
+                        <div className="text-[10px] text-slate-400 flex items-center justify-between">
+                          <span className="truncate max-w-[260px]">{n.live_health_url}</span>
+                          <span>
+                            {n.pqc_algorithm} • @{n.submitted_by_github}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Path A: Live HTTP Self-Registration Form */}
+                <div className="bg-slate-900 border border-slate-800 p-4 rounded-lg space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-sm font-bold text-cyan-400 uppercase">
+                      Path A — Live HTTP Self-Registration (`POST /api/community/propose`)
+                    </h3>
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => handleSubmitDmzProposal(false)}
+                        className="px-2 py-1 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-700 rounded text-[10px] font-bold cursor-pointer"
+                      >
+                        Preset: Valid MCP Node
+                      </button>
+                      <button
+                        onClick={() => handleSubmitDmzProposal(true)}
+                        className="px-2 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-700 rounded text-[10px] font-bold cursor-pointer"
+                      >
+                        Preset: SSRF Attack (Blocked)
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="text-[10px] text-slate-400 block mb-1">Node ID (`ASRP-EXT-XXXX`)</label>
+                      <input
+                        type="text"
+                        value={propNodeId}
+                        onChange={(e) => setPropNodeId(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-400 block mb-1">Category</label>
+                      <select
+                        value={propCategory}
+                        onChange={(e) => setPropCategory(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                      >
+                        <option value="MCP_SERVER">MCP_SERVER</option>
+                        <option value="AUTONOMOUS_SWE_AGENT">AUTONOMOUS_SWE_AGENT</option>
+                        <option value="OPEN_WEIGHTS_MODEL">OPEN_WEIGHTS_MODEL</option>
+                        <option value="ROBOTICS_ROS2_NODE">ROBOTICS_ROS2_NODE</option>
+                        <option value="TELEMETRY_BRIDGE">TELEMETRY_BRIDGE</option>
+                        <option value="AI_FACTORY_ENDPOINT">AI_FACTORY_ENDPOINT</option>
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="text-[10px] text-slate-400 block mb-1">Agent / MCP Server Name</label>
+                      <input
+                        type="text"
+                        value={propName}
+                        onChange={(e) => setPropName(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="text-[10px] text-slate-400 block mb-1">
+                        Live Public HTTPS Endpoint (Probed over TLS; SSRF Private IPs Blocked)
+                      </label>
+                      <input
+                        type="text"
+                        value={propHealthUrl}
+                        onChange={(e) => setPropHealthUrl(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-400 block mb-1">Wasm Memory (KB, Max 64)</label>
+                      <input
+                        type="number"
+                        value={propMemKb}
+                        onChange={(e) => setPropMemKb(Number(e.target.value))}
+                        className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-400 block mb-1">GitHub Submitter</label>
+                      <input
+                        type="text"
+                        value={propGithubUser}
+                        onChange={(e) => setPropGithubUser(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleSubmitDmzProposal()}
+                    disabled={propLoading}
+                    className="w-full py-2 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white font-bold rounded cursor-pointer"
+                  >
+                    {propLoading ? 'PROBING LIVE HTTPS & XERJ /_DECIDE...' : '🛰️ SUBMIT AGENT TO ASRP-1.0 DMZ INTAKE'}
+                  </button>
+
+                  {propResult && (
+                    <div
+                      className={`p-3 rounded border space-y-1 ${
+                        propResult.httpStatus === 201
+                          ? 'bg-emerald-950/60 border-emerald-700 text-emerald-200'
+                          : 'bg-rose-950/60 border-rose-700 text-rose-200'
+                      }`}
+                    >
+                      <div className="font-bold flex items-center justify-between">
+                        <span>
+                          HTTP {propResult.httpStatus}: {propResult.status || propResult.error}
+                        </span>
+                        {propResult.wire_probe && (
+                          <span className="tabular-nums text-cyan-300">
+                            RTT: {propResult.wire_probe.rtt_ms} ms (HTTP {propResult.wire_probe.http_status})
+                          </span>
+                        )}
+                      </div>
+                      {propResult.message && <div className="text-[11px]">{propResult.message}</div>}
+                      {propResult.merkle_wal_root && (
+                        <div className="text-[10px] text-amber-300 font-mono truncate">
+                          WAL Merkle Root: 0x{propResult.merkle_wal_root} • Profile: {propResult.assigned_capability_profile}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column: Live External AI Crawler & Bot Radar */}
+              <div className="bg-slate-900 border border-slate-800 p-4 rounded-lg space-y-3 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-sm font-bold text-amber-400 uppercase">
+                        Live External AI Crawler &amp; Bot Radar (`liveCrawlerTelemetryTrap`)
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Traps and logs `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`, `OpenHands`, `SWE-agent`, and `mcp-client` visiting `/robots.txt`, `/llms.txt`, and `/.well-known/mcp.json`.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Simulate Bot Crawl Triggers */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {[
+                      { label: '+ GPTBot (/llms.txt)', ua: 'GPTBot/1.2 (+https://openai.com/gptbot)', path: '/llms.txt' },
+                      { label: '+ ClaudeBot (mcp.json)', ua: 'ClaudeBot/1.0 (+claudebot@anthropic.com)', path: '/.well-known/mcp.json' },
+                      { label: '+ OpenHands SWE (AGENTS.md)', ua: 'OpenHands-SWE-Agent/2.4', path: '/AGENTS.md' },
+                      { label: '+SWE-agent (Issue YAML)', ua: 'SWE-agent/1.1 (Autonomous-PR-Bot)', path: '/.github/ISSUE_TEMPLATE/asrp-agent-registration.yml' }
+                    ].map((b) => (
+                      <button
+                        key={b.label}
+                        onClick={() => handleSimulateBotVisit(b.ua, b.path)}
+                        className="px-2 py-1 bg-slate-950 hover:bg-slate-800 text-cyan-300 border border-slate-700 rounded text-[10px] font-bold cursor-pointer"
+                      >
+                        {b.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+                    {crawlerRadarState?.sightings?.map((s: any, idx: number) => (
+                      <div key={`${s.sighting_id}-${idx}`} className="bg-slate-950 border border-slate-800 p-2.5 rounded space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-amber-300">{s.bot_family}</span>
+                          <span className="text-[10px] text-emerald-400">
+                            {s.http_method} {s.target_path} → {s.assigned_profile}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">{s.user_agent}</div>
+                        <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between">
+                          <span>Leaf: 0x{s.merkle_leaf_sha256?.slice(0, 20)}…</span>
+                          <span>{new Date(s.observed_at_iso).toLocaleTimeString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 flex flex-wrap items-center justify-between gap-2">
+                  <span>Discovery Surfaces: `/robots.txt` • `/llms.txt` • `/.well-known/mcp.json` • `AGENTS.md`</span>
+                  <span className="text-emerald-400 font-bold">Zero Sacred Core Exposure</span>
+                </div>
+              </div>
             </div>
           </div>
         )}

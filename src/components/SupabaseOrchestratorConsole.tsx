@@ -332,10 +332,22 @@ export const SupabaseOrchestratorConsole: React.FC<SupabaseOrchestratorConsolePr
       const res = await fetch('/api/census/orchestrator');
       if (res.ok) {
         const data = await res.json();
-        const agentList: CensusAgentRow[] = Array.isArray(data.agents) ? data.agents : [];
-        const telemetryList: CensusTelemetryRow[] = Array.isArray(data.telemetry)
+        const rawAgents: CensusAgentRow[] = Array.isArray(data.agents) ? data.agents : [];
+        const rawTelemetry: CensusTelemetryRow[] = Array.isArray(data.telemetry)
           ? data.telemetry
           : [];
+        const seenAgents = new Set<string>();
+        const agentList = rawAgents.filter((a) => {
+          if (!a?.id || seenAgents.has(a.id)) return false;
+          seenAgents.add(a.id);
+          return true;
+        });
+        const seenTelemetry = new Set<string>();
+        const telemetryList = rawTelemetry.filter((t) => {
+          if (!t?.id || seenTelemetry.has(t.id)) return false;
+          seenTelemetry.add(t.id);
+          return true;
+        });
         setAgents(agentList);
         setTelemetry(telemetryList);
         if (agentList.length > 0 && !selectedAgentId) {
@@ -756,9 +768,9 @@ export const SupabaseOrchestratorConsole: React.FC<SupabaseOrchestratorConsolePr
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800/70">
-                  {agents.map((ag) => (
+                  {agents.map((ag, idx) => (
                     <tr
-                      key={ag.id}
+                      key={`${ag.id}-${idx}`}
                       className={isLight ? 'hover:bg-gray-50' : 'hover:bg-white/[0.02]'}
                     >
                       <td className="py-2.5 px-3">
@@ -840,8 +852,8 @@ export const SupabaseOrchestratorConsole: React.FC<SupabaseOrchestratorConsolePr
                       : 'bg-black/50 border-gray-700 text-white'
                   }`}
                 >
-                  {agents.map((a) => (
-                    <option key={a.id} value={a.id}>
+                  {agents.map((a, idx) => (
+                    <option key={`${a.id}-${idx}`} value={a.id}>
                       {a.agent_name} ({a.id.slice(0, 8)}...)
                     </option>
                   ))}
@@ -930,9 +942,9 @@ export const SupabaseOrchestratorConsole: React.FC<SupabaseOrchestratorConsolePr
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800/70">
-                  {telemetry.map((t) => (
+                  {telemetry.map((t, idx) => (
                     <tr
-                      key={t.id}
+                      key={`${t.id}-${idx}`}
                       className={isLight ? 'hover:bg-gray-50' : 'hover:bg-white/[0.02]'}
                     >
                       <td className="py-2.5 px-3 font-mono text-[11px] text-gray-500">

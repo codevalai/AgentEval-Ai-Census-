@@ -693,12 +693,9 @@ export async function executeHyperCrawlerSweep(limitFeeds?: number): Promise<{
 
   // Persist directly to Supabase PostgreSQL if credentials are present
   let persistedRows = 0;
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-  if (supabaseUrl && supabaseKey) {
+  if (supabase) {
     try {
-      const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
       const { error, count } = await supabase
         .from('census_wire_probes')
         .insert(probes, { count: 'exact' });
@@ -717,3 +714,19 @@ export async function executeHyperCrawlerSweep(limitFeeds?: number): Promise<{
     supabase_persisted_rows: persistedRows
   };
 }
+
+const supabaseUrlGlobal =
+  process.env.SUPABASE_URL ||
+  process.env.VITE_SUPABASE_URL ||
+  'https://wvhjcxxfslzkechhoolz.supabase.co';
+const supabaseKeyGlobal =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  '';
+
+export const supabase: SupabaseClient | null =
+  supabaseUrlGlobal && supabaseKeyGlobal
+    ? createClient(supabaseUrlGlobal, supabaseKeyGlobal)
+    : null;
+

@@ -1,0 +1,37 @@
+name: "🛡️ ASRP-1.0 External Agent & Crawler Intake Gatekeeper"
+
+on:
+  pull_request:
+    branches: [main, stable]
+    paths:
+      - "data/community-registered-agents.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  constitutional-dmz-audit:
+    name: "Verify External Agent PR (Zero Sacred Diff + Live HTTPS Probe)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch (Unprivileged Fork Sandbox)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install Locked Dependencies
+        run: npm ci --no-audit --no-fund --legacy-peer-deps
+
+      - name: Execute ASRP-1.0 DMZ Constitutional Verifier
+        env:
+          ENFORCE_DMZ_SINGLE_FILE: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          GITHUB_BASE_REF: ${{ github.base_ref || 'main' }}
+        run: npx tsx scripts/verify-community-intake.ts

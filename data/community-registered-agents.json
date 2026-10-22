@@ -1,0 +1,50 @@
+{
+  "schema_version": "ASRP-1.0-DMZ",
+  "repository": "https://github.com/codevalai/AgentEval-Ai-Census-",
+  "constitutional_invariant": "APPEND_ONLY_SAFE_HARBOR_ZERO_SACRED_MUTATION",
+  "max_enclave_memory_kb": 64,
+  "registered_nodes": [
+    {
+      "node_id": "ASRP-EXT-0001",
+      "agent_or_server_name": "Cod3Eval Sovereign Genesis Reference Node",
+      "category": "MCP_SERVER",
+      "sovereignty_zone": "US-Sovereign",
+      "repository_url": "https://github.com/codevalai/AgentEval-Ai-Census-",
+      "live_health_url": "https://openrouter.ai/api/v1/models",
+      "spiffe_svid": "spiffe://sovereign.local/ns/community/node/genesis-0001",
+      "pqc_algorithm": "ML-KEM-1024",
+      "max_memory_kb": 64,
+      "ed25519_public_key_hex": "302a300506032b65700321009f86d081884c7d659a2feaa0c55ad015a3bf4f1b",
+      "submitted_by_github": "nicholasbrianbn",
+      "registered_at_iso": "2026-10-22T20:00:00.000Z"
+    },
+    {
+      "node_id": "ASRP-EXT-0002",
+      "agent_or_server_name": "ModelContextProtocol SDK Telemetry Sentinel",
+      "category": "TELEMETRY_BRIDGE",
+      "sovereignty_zone": "US-Sovereign",
+      "repository_url": "https://github.com/modelcontextprotocol/servers",
+      "live_health_url": "https://api.npmjs.org/downloads/point/last-day/@modelcontextprotocol/sdk",
+      "spiffe_svid": "spiffe://sovereign.local/ns/community/node/mcp-sdk-sentinel-0002",
+      "pqc_algorithm": "ML-DSA-87",
+      "max_memory_kb": 48,
+      "ed25519_public_key_hex": "302a300506032b65700321004b227777d4dd1fc61c6f884f48641d02b4d121d3",
+      "submitted_by_github": "mcp-registry-bot",
+      "registered_at_iso": "2026-10-22T20:05:00.000Z"
+    },
+    {
+      "node_id": "ASRP-EXT-0003",
+      "agent_or_server_name": "HuggingFace Open-Weights Model Indexer Node",
+      "category": "OPEN_WEIGHTS_MODEL",
+      "sovereignty_zone": "EU-AI-Act",
+      "repository_url": "https://github.com/huggingface/transformers",
+      "live_health_url": "https://huggingface.co/api/models?limit=1",
+      "spiffe_svid": "spiffe://sovereign.local/ns/community/node/hf-open-weights-0003",
+      "pqc_algorithm": "Ed25519",
+      "max_memory_kb": 64,
+      "ed25519_public_key_hex": "302a300506032b6570032100e3b0c44298fc1c149afbf4c8996fb92427ae41e4",
+      "submitted_by_github": "hf-census-crawler",
+      "registered_at_iso": "2026-10-22T20:10:00.000Z"
+    }
+  ]
+}

@@ -1591,6 +1591,111 @@ Provide a rigorous, data-dense 3-paragraph synthesis connecting these real-world
           return;
         }
 
+        // ====================================================================
+        // ASRP-1.0 COMMUNITY DMZ INTAKE, CRAWLER RADAR & GUARDRAIL SPINE ROUTES
+        // ====================================================================
+        if (
+          (url === '/robots.txt' ||
+            url === '/llms.txt' ||
+            url === '/.well-known/mcp.json' ||
+            (url.startsWith('/api/community/') && !url.startsWith('/api/community/crawler-radar'))) &&
+          !(req as any).__crawlerVisitRecorded
+        ) {
+          try {
+            (req as any).__crawlerVisitRecorded = true;
+            const { recordCrawlerVisit } = await import('./src/routes/community-dmz-routes.ts');
+            recordCrawlerVisit(
+              String(req.headers['user-agent'] || 'Autonomous-Discovery-Client/1.0'),
+              url,
+              req.method || 'GET'
+            );
+          } catch {
+            // Non-fatal
+          }
+        }
+
+        if (url === '/api/community/nodes' && req.method === 'GET') {
+          res.setHeader('Content-Type', 'application/json');
+          try {
+            const { getCommunityDmzNodesState } = await import('./src/routes/community-dmz-routes.ts');
+            res.statusCode = 200;
+            res.end(JSON.stringify(getCommunityDmzNodesState()));
+          } catch (err: any) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: 'DMZ_READ_ERROR', message: err?.message }));
+          }
+          return;
+        }
+
+        if (url === '/api/community/propose' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsed = JSON.parse(body || '{}');
+              const { processExternalAgentProposal } = await import('./src/routes/community-dmz-routes.ts');
+              const result = await processExternalAgentProposal(parsed);
+              res.statusCode = result.httpCode;
+              res.end(JSON.stringify(result.body));
+            } catch (err: any) {
+              res.statusCode = 400;
+              res.end(
+                JSON.stringify({
+                  error: 'ASRP_PROPOSAL_REJECTED',
+                  message: err?.message || 'Invalid schema or unreachable HTTPS endpoint',
+                })
+              );
+            }
+          });
+          return;
+        }
+
+        if (url.startsWith('/api/community/crawler-radar') && req.method === 'GET') {
+          res.setHeader('Content-Type', 'application/json');
+          try {
+            const parsedUrl = new URL(url, 'http://localhost:3000');
+            const simBot = parsedUrl.searchParams.get('simulate_bot');
+            const targetPath = parsedUrl.searchParams.get('target_path') || '/.well-known/mcp.json';
+            const { getCrawlerRadarState } = await import('./src/routes/community-dmz-routes.ts');
+            const radarPayload = getCrawlerRadarState(
+              simBot ? { ua: simBot, targetPath } : undefined
+            );
+            res.statusCode = 200;
+            res.end(JSON.stringify(radarPayload));
+          } catch (err: any) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: err?.message || 'Crawler radar failed' }));
+          }
+          return;
+        }
+
+        if (url === '/api/community/verify-ledger' && req.method === 'POST') {
+          res.setHeader('Content-Type', 'application/json');
+          try {
+            const { verifyCommunityDmzLedgerLive } = await import('./src/routes/community-dmz-routes.ts');
+            const report = await verifyCommunityDmzLedgerLive();
+            res.statusCode = 200;
+            res.end(JSON.stringify(report));
+          } catch (err: any) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: 'DMZ_VERIFIER_ERROR', message: err?.message }));
+          }
+          return;
+        }
+
+        if (url.startsWith('/api/guardrails/') || url.startsWith('/api/census/') || url.startsWith('/api/sovereign-300/')) {
+          try {
+            const { app: expressApp } = await import('./src/server.ts');
+            expressApp(req as any, res as any, next);
+            return;
+          } catch {
+            // Fall through
+          }
+        }
+
         next();
       });
     },

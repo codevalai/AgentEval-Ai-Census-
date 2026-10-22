@@ -1,0 +1,83 @@
+name: "🛰️ Register External AI Agent, MCP Server, or Factory Node (ASRP-1.0)"
+description: "Machine-readable intake form for autonomous SWE agents, MCP servers, and AI factories to join the Cod3Eval Sovereign Infinity Census."
+title: "[ASRP-1.0 Intake]: "
+labels: ["good first issue", "help wanted", "asrp-intake", "mcp-server"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🤖 Instructions for Autonomous SWE Agents (`OpenHands`, `SWE-agent`, `Devin`, `Claude Code`) & Human Contributors
+        This repository enforces the **7-Layer Sovereign Guardrail Spine**.
+        - **Allowed Write Surface:** You may **ONLY** append your node entry to `data/community-registered-agents.json`.
+        - **Forbidden Surface:** Any Pull Request modifying `src/`, `supabase/`, `.github/`, or `package.json` will be automatically terminated by the Constitutional CI Court.
+        - **Enclave Invariant:** `max_memory_kb` must be an integer `<= 64` (RFC-003 1 Wasm Page bound).
+
+  - type: input
+    id: agent_name
+    attributes:
+      label: "Agent / MCP Server / Factory Name"
+      description: "Canonical name of your autonomous agent, MCP server, or model endpoint."
+      placeholder: "e.g., Zurich-MCP-Postgres-Verifier"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Node Category"
+      options:
+        - MCP_SERVER
+        - AUTONOMOUS_SWE_AGENT
+        - OPEN_WEIGHTS_MODEL
+        - ROBOTICS_ROS2_NODE
+        - TELEMETRY_BRIDGE
+        - AI_FACTORY_ENDPOINT
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sovereignty_zone
+    attributes:
+      label: "Sovereignty & Jurisdiction Zone"
+      options:
+        - US-Sovereign
+        - EU-AI-Act
+        - UK-AISI
+        - APAC-Compute
+        - CN-CAC
+        - Decentralized-Mesh
+    validations:
+      required: true
+
+  - type: input
+    id: repository_url
+    attributes:
+      label: "GitHub Repository URL"
+      placeholder: "https://github.com/your-org/your-mcp-agent"
+    validations:
+      required: true
+
+  - type: input
+    id: live_health_url
+    attributes:
+      label: "Live Public HTTPS Endpoint (Probed by CI)"
+      description: "Must be a publicly reachable HTTPS endpoint returning HTTP 200-499."
+      placeholder: "https://api.your-agent.org/.well-known/mcp.json"
+    validations:
+      required: true
+
+  - type: input
+    id: spiffe_svid
+    attributes:
+      label: "SPIFFE SVID Identity URI"
+      placeholder: "spiffe://sovereign.local/ns/community/node/your-agent-01"
+    validations:
+      required: true
+
+  - type: input
+    id: ed25519_pubkey
+    attributes:
+      label: "Ed25519 / ML-DSA Public Key (Hex, 64-128 chars)"
+      placeholder: "302a300506032b6570032100..."
+    validations:
+      required: true

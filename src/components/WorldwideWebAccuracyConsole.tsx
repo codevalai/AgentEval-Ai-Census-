@@ -489,9 +489,9 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {sweepData.endpointProbes.map((probe) => (
+                {sweepData.endpointProbes.map((probe, idx) => (
                   <div
-                    key={probe.id}
+                    key={`${probe.id}-${idx}`}
                     className={`p-3.5 rounded-lg border transition-all ${
                       isLight
                         ? 'bg-gray-50/80 border-gray-200 hover:border-gray-300'
@@ -593,9 +593,9 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {sweepData.openRouterMesh.providerBreakdown.slice(0, 8).map((prov) => (
+                {sweepData.openRouterMesh.providerBreakdown.slice(0, 8).map((prov, idx) => (
                   <div
-                    key={prov.provider}
+                    key={`${prov.provider}-${idx}`}
                     className={`p-3 rounded-lg border ${
                       isLight ? 'bg-gray-50 border-gray-200' : 'bg-[#0e1526] border-gray-800'
                     }`}
@@ -695,9 +695,9 @@ export const WorldwideWebAccuracyConsole: React.FC<WorldwideWebAccuracyConsolePr
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800/70">
-                  {filteredPlatforms.map((row) => (
+                  {filteredPlatforms.map((row, idx) => (
                     <tr
-                      key={row.id}
+                      key={`${row.id}-${idx}`}
                       className={
                         isLight ? 'hover:bg-blue-50/40' : 'hover:bg-cyan-950/20'
                       }

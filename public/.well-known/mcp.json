@@ -1,0 +1,45 @@
+{
+  "mcp_version": "2026-10-22",
+  "protocol": "ASRP-1.0-DMZ",
+  "server_name": "cod3eval-sovereign-infinity-census",
+  "repository": "https://github.com/codevalai/AgentEval-Ai-Census-",
+  "description": "Planetary AI Agent Census & 24 Meta-Layer Observatory with 7-Layer Sovereign Guardrail Spine and Safe-Harbor DMZ Intake.",
+  "guardrail_invariants": {
+    "ssot_conservation_delta": 0,
+    "max_enclave_memory_kb": 64,
+    "sacred_files_count": 7,
+    "dmz_safe_harbor_ledger": "data/community-registered-agents.json"
+  },
+  "endpoints": {
+    "live_census": "/api/census/live",
+    "meta_layers_24": "/api/census/meta-layers-24",
+    "factories_16_tiers": "/api/census/factories",
+    "sovereign_300_catalog": "/api/sovereign-300/catalog",
+    "guardrail_spine_state": "/api/guardrails/state",
+    "community_dmz_nodes": "/api/community/nodes",
+    "community_dmz_propose": "/api/community/propose",
+    "community_crawler_radar": "/api/community/crawler-radar"
+  },
+  "tools": [
+    {
+      "name": "census_agent_acquire_lease",
+      "description": "Acquire a monotonic fencing lease (bigint) for distributed agent execution."
+    },
+    {
+      "name": "census_agent_transition_fsm",
+      "description": "Transition agent lifecycle state under strict 4-state FSM guards."
+    },
+    {
+      "name": "census_telemetry_commit_signed",
+      "description": "Commit Ed25519 signed + SHA-256 Merkle chained telemetry."
+    },
+    {
+      "name": "census_xerj_deterministic_plan",
+      "description": "Compile plain-words filter into deterministic Elasticsearch Query DSL."
+    },
+    {
+      "name": "census_community_dmz_propose",
+      "description": "Self-register an external MCP server or autonomous agent into the ASRP-1.0 Safe-Harbor DMZ."
+    }
+  ]
+}
