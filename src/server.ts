@@ -11,9 +11,13 @@ import express, { Request, Response } from 'express';
 import { AutonomousOrchestrator } from './agents/orchestrator.ts';
 import harvesterRouter from './routes/harvester.ts';
 import censusOrchestratorRouter from './routes/censusOrchestrator.ts';
+import { censusLiveRouter } from './routes/census-live-routes.ts';
+import { sovereignSubsystemsRouter } from './routes/missing-subsystems-routes.ts';
 
 export const app = express();
 app.use(express.json());
+app.use('/api/census', censusLiveRouter);
+app.use('/api', sovereignSubsystemsRouter);
 app.use('/api', harvesterRouter);
 app.use('/api/v2', censusOrchestratorRouter);
 
