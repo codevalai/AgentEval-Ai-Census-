@@ -22,8 +22,8 @@ export const SectionNav: React.FC<SectionNavProps> = ({
   const coreSections = [
     { id: 'sovereign-guardrail-spine-console', label: '🛡️ Sovereign Guardrail Spine (7-Layer Map • 6 Capability Profiles • 6 Drift Alarms • RLS & CI Court)', highlight: true },
     { id: 'omniscient-hyper-scale-console', label: '⚡ Phase 7 ×3 Hyper-Scale Engine (24 Meta-Layers • 15 Swarms • 64 Live APIs • Tiers 1–16 • Sovereign 300)', highlight: true },
-    { id: 'omniscient-factory-meta-console', label: '🏭 Omniscient AI Factory Registry (Tiers 1–8 + Dev IDEs) • 5 Hyper-Crawler Swarms • 8 Meta-Layers', highlight: true },
-    { id: 'worldwide-web-accuracy-console', label: '🌐 WWO-1.0: Worldwide Web Live AI Triangulation (21 Live APIs • 24 Web Platforms • ±0.42% Kalman CI)', highlight: true },
+    { id: 'omniscient-factory-meta-console', label: '🏭 Omniscient AI Factory Registry (Tiers 1–16 + Top 30 Dev IDEs) • 15 Hyper-Crawler Swarms • 24 Meta-Layers', highlight: true },
+    { id: 'worldwide-web-accuracy-console', label: '🌐 WWO-1.0: Worldwide Web Live AI Triangulation (64 Live APIs • 24 Web Platforms • ±0.42% Kalman CI)', highlight: true },
     { id: 'supabase-orchestrator-console', label: '⚡ Supabase & Autonomous Orchestrator (wvhjcxxfslzkechhoolz • Zod Schemas • RLS PostgreSQL)', highlight: true },
     { id: 'xerj-zenith-console', label: '🔥 XERJ Sovereign Zenith (Corpus Hub Grade AAA • System-1 /_decide • Second-Brain Graph • SSE)', highlight: true },
     { id: 'exascale-subatomic-console', label: '⚛️ Phase 7: AMSPE-1.0 (1T Verkle Directory • Loihi 2 4.2pJ • Qiskit-Aer • DTN Mars)', highlight: true },
@@ -31,7 +31,7 @@ export const SectionNav: React.FC<SectionNavProps> = ({
     { id: 'planetary-75-census-console', label: '📡 3-Tier Coverage & Dark Matter Boundary (814.37B Indexed [71.9%] • 318.00B Dark [28.1%] • 1.132T Ceiling)', highlight: true },
     { id: 'physical-observatory-console', label: '🔭 Physical AI Observatory (Grounded Stack: GCP • GitHub • MCP • ROS2)', highlight: true },
     { id: 'global-civilization', label: '🌍 Global AI Civilization Live Census (10 Master Platforms)', highlight: true },
-    { id: 'swarm-taxonomy-section', label: '🧬 ×4 Swarm Census (76-Domain Architectural Taxonomy)', highlight: true },
+    { id: 'swarm-taxonomy-section', label: '🧬 ×3 Hyper-Scale Swarm Census (228-Domain [76×3] Architectural Taxonomy)', highlight: true },
     { id: 'bare-metal-systems-console', label: '⚡ Bare-Metal Systems & Wasm Runtimes (≤64 KB Sandboxing)', highlight: true },
     { id: 'planetary-pattern-engine', label: '🔮 Planetary Pattern Engine (Apex Reasoning & Swarm Economy)', highlight: true },
     { id: 'diamond-evaluation-console', label: '💎 Diamond Standard Evaluation Authority (Past • Present • Future)', highlight: true },
@@ -40,7 +40,7 @@ export const SectionNav: React.FC<SectionNavProps> = ({
     { id: 'planetary-consent-console', label: '❤️ Human & Resilience Triad (10-Clause Safety • Consent • PRR-1.0)', highlight: true },
     { id: 'planetary-transparency-console', label: '👁️ Interpretation & Transparency Layer (PIT-1.0 Legibility & Traces)', highlight: true },
     { id: 'meta-sovereign-console', label: '👑 The Meta-Sovereign Layer (Intent Canon • Stewards • Continuity)', highlight: true },
-    { id: 'sovereign-100', label: 'The Sovereign 100 (Planetary AI Repos)' },
+    { id: 'sovereign-100', label: 'The Sovereign 300 (30×10 Planetary AI Repos & Core 100 Index)' },
     { id: 'dependency-graph', label: 'Planetary AI Dependency Graph (DAG)' },
     { id: 'planetary-directory', label: 'Planetary Agent Directory (All Eras)' },
     { id: 'temporal-timeline', label: 'Temporal Timeline (2012 → 2030+ APEX)' },
@@ -112,7 +112,7 @@ export const SectionNav: React.FC<SectionNavProps> = ({
                   : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
               }`}
             >
-              76-Domain Layers (5)
+              228-Domain (76×3) Layers (5)
             </button>
           </div>
         </div>

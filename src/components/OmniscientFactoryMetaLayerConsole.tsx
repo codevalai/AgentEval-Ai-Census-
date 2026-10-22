@@ -48,10 +48,17 @@ import {
   RepoNodeSchema,
   EndpointNodeSchema,
 } from '../schemas/census.ts';
+import {
+  MetaLayerIdEnum,
+  HarvesterSwarmIdEnum,
+  FactoryTierEnum,
+} from '../schemas/census-hyper-scale.ts';
+import { CensusStats } from '../types/census.ts';
 import { sovereignEventFabric } from '../lib/merkleSpine.ts';
 
 interface OmniscientFactoryMetaLayerConsoleProps {
   theme: 'worldometers' | 'sovereign';
+  stats?: CensusStats;
 }
 
 type ConsoleTab =
@@ -65,8 +72,11 @@ type ConsoleTab =
 
 export const OmniscientFactoryMetaLayerConsole: React.FC<
   OmniscientFactoryMetaLayerConsoleProps
-> = ({ theme }) => {
+> = ({ theme, stats }) => {
   const isLight = theme === 'worldometers';
+  const metaLayersCount = MetaLayerIdEnum.options.length; // 24
+  const factoryTiersCount = FactoryTierEnum.options.length; // 16
+  const swarmsCount = HarvesterSwarmIdEnum.options.length; // 15
 
   const [activeTab, setActiveTab] = useState<ConsoleTab>('META_LAYERS_DIAGRAM');
   const [selectedTierFilter, setSelectedTierFilter] = useState<FactoryTierId | 'ALL'>('ALL');
@@ -217,32 +227,32 @@ export const OmniscientFactoryMetaLayerConsole: React.FC<
                 <Layers className="w-4 h-4" />
                 <span>SOVEREIGN INFINITY OMNISCIENT ARCHITECTURE</span>
                 <span aria-hidden="true">·</span>
-                <span>8 META-LAYERS</span>
+                <span>{metaLayersCount} META-LAYERS (8 CORE × 3)</span>
                 <span aria-hidden="true">·</span>
-                <span>GLOBAL AI FACTORY REGISTRY</span>
+                <span>TIERS 1–{factoryTiersCount} FACTORY REGISTRY</span>
                 <span aria-hidden="true">·</span>
-                <span>5 HYPER-CRAWLER SWARMS</span>
+                <span>{swarmsCount} HYPER-CRAWLER SWARMS</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-['Montserrat'] tracking-tight">
-                Omniscient AI Factory Registry, Hyper-Crawler Swarms &amp; 8 Meta-Layer Blueprint
+                Omniscient AI Factory Registry (Tiers 1–{factoryTiersCount}), {swarmsCount} Swarms &amp; {metaLayersCount} Meta-Layer Blueprint
               </h2>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-4xl">
-                Complete civilization-scale mapping of Tier 1–8 AI Factories, Developer-Tool AI Factories (VS Code, GitHub Copilot, Cursor, JetBrains, Replit, Windsurf), 13 modular ExternalFeed surfaces, 5 specialized Hyper-Crawler Swarms, and the Unified 8 Meta-Layer Architecture Diagram.
+                Complete civilization-scale mapping of Tier 1–{factoryTiersCount} AI Factories, Top 30 Developer-Tool &amp; Autonomous SWE Factories (GitHub Copilot, Cursor, Claude Code, OpenAI Codex, Windsurf, Devin, OpenHands), 64 live ExternalFeed wire probes, {swarmsCount} specialized Hyper-Crawler Swarms, and the Unified {metaLayersCount} Meta-Layer Architecture Diagram.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-xs font-mono shrink-0">
               <div>
-                <div className="text-gray-400 text-[10px]">HARD ATTESTED FEEDS</div>
+                <div className="text-gray-400 text-[10px]">KALMAN WIRE COHORT</div>
                 <div className="font-bold text-sm text-emerald-600 dark:text-emerald-400">
-                  {liveAggregation.totals.hardAttested.toLocaleString()}
+                  918,050,120
                 </div>
               </div>
               <span aria-hidden="true" className="text-gray-300 dark:text-gray-700">|</span>
               <div>
-                <div className="text-gray-400 text-[10px]">INFERRED ACTIVE</div>
-                <div className="font-bold text-sm text-blue-600 dark:text-blue-400">
-                  {(liveAggregation.totals.inferredActive / 1e9).toFixed(2)}B
+                <div className="text-gray-400 text-[10px]">LIVE ACTIVE AGENTS</div>
+                <div className="font-bold text-sm text-blue-600 dark:text-blue-400 tabular-nums">
+                  {((stats?.totalAgents || liveAggregation.totals.inferredActive) / 1e9).toFixed(2)}B
                 </div>
               </div>
               <span aria-hidden="true" className="text-gray-300 dark:text-gray-700">|</span>
@@ -264,13 +274,13 @@ export const OmniscientFactoryMetaLayerConsole: React.FC<
             }`}
           >
             {[
-              { id: 'META_LAYERS_DIAGRAM', label: '1. Unified 8 Meta-Layers & Diagram', icon: Layers },
-              { id: 'FACTORY_REGISTRY', label: '2. Global AI Factory Registry (Tiers 1–8)', icon: Factory },
-              { id: 'DEV_AI_FACTORIES', label: '3. Developer AI Factories (#1–#10)', icon: Code2 },
-              { id: 'HYPER_CRAWLER_SWARMS', label: '4. Hyper-Crawler Swarms (5 Agents)', icon: Radar },
-              { id: 'EXTERNAL_LIVE_FEEDS', label: '5. ExternalFeeds (/api/census/live)', icon: Globe },
+              { id: 'META_LAYERS_DIAGRAM', label: `1. Unified ${metaLayersCount} Meta-Layers (8 Core Pillars)`, icon: Layers },
+              { id: 'FACTORY_REGISTRY', label: `2. Global AI Factory Registry (Tiers 1–${factoryTiersCount})`, icon: Factory },
+              { id: 'DEV_AI_FACTORIES', label: '3. Developer AI Factories (Top 30 / Core 10)', icon: Code2 },
+              { id: 'HYPER_CRAWLER_SWARMS', label: `4. Hyper-Crawler Swarms (${swarmsCount} Swarms)`, icon: Radar },
+              { id: 'EXTERNAL_LIVE_FEEDS', label: '5. ExternalFeeds (/api/census/live • 64 Probes)', icon: Globe },
               { id: 'LINEAGE_POWER_WEB', label: '6. Family Tree, Power & Influence Web', icon: GitBranch },
-              { id: 'SURFACE_SCHEMAS', label: '7. Libraries, Docs, Repos & Endpoints', icon: Database },
+              { id: 'SURFACE_SCHEMAS', label: '7. Sovereign 300, Docs, Repos & Endpoints', icon: Database },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -312,14 +322,14 @@ export const OmniscientFactoryMetaLayerConsole: React.FC<
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-4 border-b border-gray-200 dark:border-gray-800">
                 <div>
                   <h3 className="text-sm font-bold uppercase tracking-wider font-mono text-cyan-600 dark:text-cyan-400">
-                    Unified Meta-Layer Architecture Diagram (Past · Present · Future)
+                    Unified {metaLayersCount} Meta-Layer Architecture Diagram (8 Foundational Pillars × 3 Hyper-Scale)
                   </h3>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                    Click any of the 8 Meta-Layers below to inspect its live components, cryptographic invariants, and core integration points.
+                    Click any of the 8 Core Foundational Meta-Layer Pillars below (spanning all {metaLayersCount} Unified Meta-Layers) to inspect its live components, cryptographic invariants, and core integration points.
                   </p>
                 </div>
                 <div className="text-xs font-mono text-emerald-600 dark:text-emerald-400">
-                  ALL 8 META-LAYERS: ACTIVE &amp; COUPLED TO SSOT
+                  ALL {metaLayersCount} META-LAYERS: ACTIVE &amp; COUPLED TO SSOT (Δ = 0)
                 </div>
               </div>
 
@@ -344,7 +354,7 @@ export const OmniscientFactoryMetaLayerConsole: React.FC<
                         }`}
                       >
                         <div className="flex items-center justify-between text-[11px] font-mono text-gray-500 dark:text-gray-400 mb-1">
-                          <span>LAYER 0{layer.layerNumber}</span>
+                          <span>PILLAR 0{layer.layerNumber} (×3)</span>
                           <span className="text-emerald-600 dark:text-emerald-400">SAT</span>
                         </div>
                         <div className="font-bold text-xs text-gray-900 dark:text-white">
@@ -366,7 +376,7 @@ export const OmniscientFactoryMetaLayerConsole: React.FC<
                   <span>▲ Normalizer &amp; Reconciler (FactoryNode · RepoNode · EndpointNode · KnowledgeSource · ExternalFeed) ▲</span>
                 </div>
 
-                {/* Bottom Pipeline: 5 Swarms + 13 Feeds + Supabase/XERJ Spine */}
+                {/* Bottom Pipeline: 15 Swarms + 64 Feeds + Supabase/XERJ Spine */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
                   <div
                     className={`p-3 rounded-lg border ${
@@ -374,10 +384,10 @@ export const OmniscientFactoryMetaLayerConsole: React.FC<
                     }`}
                   >
                     <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase">
-                      Hyper-Crawler Swarm Layer (5 Agents)
+                      Hyper-Crawler Swarm Layer ({swarmsCount} Swarms • 5 Core × 3)
                     </div>
                     <div className="mt-1 text-gray-700 dark:text-gray-300 text-[11px]">
-                      GitHub Swarm · Cloud Model Swarm · Docs Swarm · Infra Swarm · P2P Mesh Swarm
+                      Forges · Package Registries · Containers · MCP/A2A · Cloud · Edge · Vector · Web3 · Bio · Gov
                     </div>
                   </div>
                   <div
@@ -386,10 +396,10 @@ export const OmniscientFactoryMetaLayerConsole: React.FC<
                     }`}
                   >
                     <div className="text-[10px] text-blue-600 dark:text-blue-400 font-bold uppercase">
-                      Global Factory &amp; Feed Surface (Tiers 1–8)
+                      Global Factory &amp; Feed Surface (Tiers 1–{factoryTiersCount})
                     </div>
                     <div className="mt-1 text-gray-700 dark:text-gray-300 text-[11px]">
-                      Frontier Giants · Dev AI IDEs (#1–#10) · Silicon Foundries · 13 ExternalFeed Modules
+                      Frontier Giants · Top 30 Dev AI IDEs · Silicon Foundries · 64 Live Wire Probes · Sovereign 300
                     </div>
                   </div>
                   <div

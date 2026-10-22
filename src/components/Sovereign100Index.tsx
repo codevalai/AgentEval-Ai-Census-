@@ -119,14 +119,14 @@ export const Sovereign100Index: React.FC<Sovereign100IndexProps> = ({ theme }) =
             <div className="flex items-center gap-2 flex-wrap">
               <BookOpen className="w-5 h-5 text-amber-500" />
               <h2 className="text-xl sm:text-2xl font-bold font-['Montserrat'] tracking-tight">
-                The Sovereign 100 — Planetary-Scale AI Repos, Docs &amp; Libraries
+                The Sovereign 300 (30×10) &amp; Core 100 Pillar Index — Planetary AI Repos, Docs &amp; Libraries
               </h2>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                10 DISCIPLINES × 10 REPOS = 100 EXACT
+                30 DISCIPLINES × 10 REPOS = 300 SOVEREIGN • 10×10 CORE PILLARS
               </span>
             </div>
             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-              The 100 canonical pillars (10 per discipline) powering empirical ingestion, agent swarms, MCP ecosystems, distributed inference, robotics, and post-quantum governance.
+              Coupled to the 300 canonical open-source AI/Agent repositories (30 disciplines × 10 repos) and 100 foundational cleanroom pillars powering empirical ingestion, MCP ecosystems, distributed inference, robotics, and post-quantum governance.
             </p>
           </div>
 

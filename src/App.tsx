@@ -459,8 +459,8 @@ export default function App() {
         {/* Sovereign Guardrail Spine: 7-Layer Defense Map, 6 Agent Capability Profiles, 6 Swarm Drift Rules & PR Guardian */}
         <SovereignGuardrailSpineConsole />
 
-        {/* Omniscient AI Factory Registry (Tiers 1-8 + Dev IDEs), 5 Hyper-Crawler Swarms & 8 Meta-Layers Blueprint */}
-        <OmniscientFactoryMetaLayerConsole theme={theme} />
+        {/* Omniscient AI Factory Registry (Tiers 1-16 + Top 30 Dev IDEs), 15 Hyper-Crawler Swarms & 24 Meta-Layers Blueprint */}
+        <OmniscientFactoryMetaLayerConsole theme={theme} stats={stats} />
 
         {/* WWO-1.0: Worldwide Web Live AI Platform Triangulation & Bayesian Accuracy Engine */}
         <WorldwideWebAccuracyConsole stats={stats} theme={theme} />
@@ -601,7 +601,7 @@ export default function App() {
         <DarkMatterRadar stats={stats} theme={theme} />
 
         {/* Planetary Governance RFC Standards & SMT-LIB2 Z3 Prover */}
-        <GovernanceConsole theme={theme} />
+        <GovernanceConsole theme={theme} stats={stats} />
       </main>
 
       {/* Footer */}
@@ -632,7 +632,7 @@ export default function App() {
               onClick={() => handleScrollToSection('sovereign-100')}
               className="hover:underline cursor-pointer"
             >
-              The Sovereign 100
+              The Sovereign 300
             </button>
             <span>•</span>
             <button
