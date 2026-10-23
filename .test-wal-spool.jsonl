@@ -14,3 +14,5 @@
 {"test":2,"_wal_spooled_at":"2026-10-23T01:34:56.601Z","_wal_reason":"Simulated network timeout"}
 {"test":1,"_wal_spooled_at":"2026-10-23T02:14:06.083Z","_wal_reason":"Simulated network timeout"}
 {"test":2,"_wal_spooled_at":"2026-10-23T02:14:06.083Z","_wal_reason":"Simulated network timeout"}
+{"test":1,"_wal_spooled_at":"2026-10-23T03:05:55.913Z","_wal_reason":"Simulated network timeout"}
+{"test":2,"_wal_spooled_at":"2026-10-23T03:05:55.913Z","_wal_reason":"Simulated network timeout"}

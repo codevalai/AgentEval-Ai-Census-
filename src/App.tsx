@@ -56,6 +56,7 @@ import { XerjZenithConsole } from './components/XerjZenithConsole.tsx';
 import { OmniscientFactoryMetaLayerConsole } from './components/OmniscientFactoryMetaLayerConsole.tsx';
 import { OmniscientHyperScaleConsole } from './components/OmniscientHyperScaleConsole.tsx';
 import { SovereignGuardrailSpineConsole } from './components/SovereignGuardrailSpineConsole.tsx';
+import { Phase8OmegaObservatoryConsole } from './components/Phase8OmegaObservatoryConsole.tsx';
 import {
   INITIAL_STATS,
   INITIAL_REGIONS,
@@ -476,6 +477,9 @@ export default function App() {
 
         {/* Dual Horizon Panels: Today vs This Year */}
         <HorizonPanels stats={stats} theme={theme} />
+
+        {/* Phase 8 → Phase 9 → Phase Ω Tripled Observatory: 72 Meta-Layers, 45 Swarms, 192 Endpoints, Bio-AI Swarm & Full MCP */}
+        <Phase8OmegaObservatoryConsole stats={stats} theme={theme} />
 
         {/* Phase 7 ×3 Hyper-Scale Live Wire Engine: 24 Meta-Layers, 15 Swarms, 64 Live APIs, 16 Factory Tiers & Sovereign 300 */}
         <OmniscientHyperScaleConsole />

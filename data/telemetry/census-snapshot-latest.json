@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-10-23T02:14:08.371Z",
+  "exportedAt": "2026-10-23T03:05:58.088Z",
   "censusScale": {
     "activeConcurrent": 342892410000,
     "latentBlueprintsAndStaged": 471480590000,
@@ -12,7 +12,7 @@
   },
   "v3OmniSnapshot": {
     "schemaVersion": "SOVEREIGN-INFINITY-V3.0-HYPER-SCALE",
-    "timestamp": "2026-10-23T02:14:08.367Z",
+    "timestamp": "2026-10-23T03:05:58.085Z",
     "censusStats": {
       "totalAgents": 353908524311,
       "aiAgents": 238817680418,
@@ -675,8 +675,8 @@
       "chapmanCaptureRecaptureEstimate": 492671753,
       "littlesLawActiveConcurrency": 38420910,
       "kalmanPosteriorVariance": 0.0412,
-      "lastWireSweepRootSha256": "33285adc7fc63da08d2f1f460ac81979839d2cabcee96cbb7d7e4d99ef89c330",
-      "lastWireSweepEd25519Sig": "7fbd3f8f47d6534f32bf6e27827932014dd47f8421ad7ee6c2613e68f1585bb3"
+      "lastWireSweepRootSha256": "840fa5a2a66568e3687b6785ed147d197379c1342a47074b505da6e9b6253d16",
+      "lastWireSweepEd25519Sig": "80394e034707c12d30c7e888eaa2ea762f26b424c57fee0159c694c89012b7d5"
     },
     "guardrailSpineStatus": {
       "layersEnforced": "7_OF_7_SAT",
@@ -690,12 +690,12 @@
     },
     "pqcSpec": "ML-KEM-1024",
     "bftQuorum": 92.5,
-    "merkleRoot": "33285adc7fc63da08d2f1f460ac81979839d2cabcee96cbb7d7e4d99ef89c330",
-    "ed25519Witness": "7fbd3f8f47d6534f32bf6e27827932014dd47f8421ad7ee6c2613e68f1585bb3",
+    "merkleRoot": "840fa5a2a66568e3687b6785ed147d197379c1342a47074b505da6e9b6253d16",
+    "ed25519Witness": "80394e034707c12d30c7e888eaa2ea762f26b424c57fee0159c694c89012b7d5",
     "cryptographicAttestation": {
-      "merkleRootSha256": "33285adc7fc63da08d2f1f460ac81979839d2cabcee96cbb7d7e4d99ef89c330",
-      "ed25519Signature": "7fbd3f8f47d6534f32bf6e27827932014dd47f8421ad7ee6c2613e68f1585bb3",
-      "fencingTokenMonotonic": "1793721648",
+      "merkleRootSha256": "840fa5a2a66568e3687b6785ed147d197379c1342a47074b505da6e9b6253d16",
+      "ed25519Signature": "80394e034707c12d30c7e888eaa2ea762f26b424c57fee0159c694c89012b7d5",
+      "fencingTokenMonotonic": "1793724758",
       "pqcKemAlgorithm": "NIST-FIPS-203-ML-KEM-1024",
       "pqcSignatureAlgorithm": "NIST-FIPS-204-ML-DSA-87"
     },
@@ -745,7 +745,7 @@
         "temperatureC": 64,
         "kernelFaultsCount": 0,
         "driverVersion": "550.54.14 CUDA 12.4",
-        "timestamp": "2:14:08 AM"
+        "timestamp": "3:05:58 AM"
       },
       {
         "gpuId": "gpu-ashburn-b200-04",
@@ -757,7 +757,7 @@
         "temperatureC": 69,
         "kernelFaultsCount": 1,
         "driverVersion": "560.28.03 CUDA 12.6",
-        "timestamp": "2:14:08 AM"
+        "timestamp": "3:05:58 AM"
       },
       {
         "gpuId": "gpu-zurich-h200-07",
@@ -769,7 +769,7 @@
         "temperatureC": 58,
         "kernelFaultsCount": 0,
         "driverVersion": "550.54.14 CUDA 12.4",
-        "timestamp": "2:14:08 AM"
+        "timestamp": "3:05:58 AM"
       },
       {
         "gpuId": "gpu-singapore-tpu5e-02",
@@ -781,7 +781,7 @@
         "temperatureC": 52,
         "kernelFaultsCount": 0,
         "driverVersion": "LibTPU Sovereign v2.1",
-        "timestamp": "2:14:08 AM"
+        "timestamp": "3:05:58 AM"
       }
     ],
     "cudaTraps": [
