@@ -232,3 +232,6 @@ create trigger update_census_agents_updated_at
     for each row
     execute function public.update_updated_at_column();
 `;
+
+export * from './governance.ts';
+

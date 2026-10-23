@@ -138,6 +138,7 @@ export interface CapabilityTierInfo {
 
 export interface CensusStats {
   totalAgents: number;
+  aiAgents?: number;
   agentsBornToday: number;
   agentsShutdownToday: number;
   netGrowthToday: number;
@@ -161,6 +162,8 @@ export interface CensusStats {
 export interface RegionalNode {
   id: string;
   rank: number;
+  latencyRank?: number;
+  populationRank?: number;
   name: string;
   city: string;
   country: string;
@@ -174,6 +177,8 @@ export interface RegionalNode {
   bftWeight: number;
   health: 'OPTIMAL' | 'DEGRADED' | 'ISOLATED';
   sharePercent: number;
+  merkleLeaf?: string;
+  merkleLeafSha256?: string;
 }
 
 export interface AtlasCategory {

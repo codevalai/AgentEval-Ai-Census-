@@ -22,6 +22,9 @@ import { worldwideWebAccuracyEngine } from '../src/services/worldwideWebAccuracy
 import { AgentRegistrationSchema, TelemetryPayloadSchema } from '../src/schemas/census.ts';
 import { SovereignLifecycleFSM } from '../src/agents/sovereign-lifecycle-fsm.ts';
 import { SovereignZenithOrchestrator } from '../src/agents/sovereign-zenith-orchestrator.ts';
+import { buildOmniSovereignExportV3 } from '../src/lib/omniSnapshotExporterV3.ts';
+import { serializeReconciledRegionsToCsv } from '../src/lib/sovereignExportAndMatrixEngine.ts';
+import { ExactIntegerTickEngine } from '../src/lib/exactTickAccumulator.ts';
 
 async function main() {
   console.log('===========================================================');
@@ -189,6 +192,51 @@ async function main() {
   console.log(`  - Ed25519 Crypto Signature:    PASS (${isSigValid ? 'SPKI Verified' : 'Failed'})`);
   console.log(`  - Merkle Telemetry Chain:      PASS (${testSignedRec.merkle_hash.slice(0, 24)}...)`);
   console.log('  - XERJ Native Primitives:      PASS (/_decide, /_memory, /_graph, /_bulk, /_ask)');
+
+  // 8. Stage 5 Snapshot Export Verifier: V3.0 2D Matrix Conservation & Sub-Integer Carry Audit
+  console.log('\n[STAGE 5 SNAPSHOT AUDIT] Verifying V3.0 2D Bi-Proportional Matrix & 17-Column CSV...');
+  const tickEngine = new ExactIntegerTickEngine();
+  const tickedState = tickEngine.advanceTick(0.155); // fractional second test
+  const v3LiveExport = buildOmniSovereignExportV3({
+    rawStats: {
+      totalAgents: 353908524311.4997,
+      agentsBornToday: 4842091112.900159,
+      agentsShutdownToday: 1620410045.4998486,
+      birthsPerSec: 148420,
+      shutdownsPerSec: 49680,
+    },
+  });
+  const csv17 = serializeReconciledRegionsToCsv(v3LiveExport);
+  const csvLines = csv17.trim().split('\n');
+  const csvHeaderCols = csvLines[0].split(',');
+
+  const isPureInt =
+    Number.isInteger(tickedState.totalAgents) &&
+    Number.isInteger(v3LiveExport.censusStats.totalAgents) &&
+    Number.isInteger(v3LiveExport.censusStats.agentsBornToday) &&
+    Number.isInteger(v3LiveExport.censusStats.agentsShutdownToday) &&
+    Number.isInteger(v3LiveExport.censusStats.netGrowthToday) &&
+    Number.isInteger(v3LiveExport.censusStats.agentsCreatedYear);
+
+  console.log(`  - Sub-Integer Carry Engine:    ${isPureInt ? 'PASS (0 Float Fractions)' : 'FAIL'}`);
+  console.log(`  - Live Tick Total Reconciled:  ${v3LiveExport.censusStats.totalAgents.toLocaleString()} (Δ_2D = ${v3LiveExport.ssotVerification.matrixDriftDelta})`);
+  console.log(`  - 20-Region Row Total Sum:     ${v3LiveExport.ssotVerification.rowTotalSum.toLocaleString()}`);
+  console.log(`  - 4-Tier Column Sum:           ${v3LiveExport.ssotVerification.tiersSum.toLocaleString()} (AI=${v3LiveExport.censusStats.aiAgents.toLocaleString()}, AGI=${v3LiveExport.censusStats.agiAgents.toLocaleString()}, ASI=${v3LiveExport.censusStats.asiAgents.toLocaleString()}, APEX=${v3LiveExport.censusStats.apexAgents.toLocaleString()})`);
+  console.log(`  - Daily Net Growth Identity:   ${v3LiveExport.censusStats.netGrowthToday.toLocaleString()} (DRIFT: ${v3LiveExport.censusStats.netGrowthToday - (v3LiveExport.censusStats.agentsBornToday - v3LiveExport.censusStats.agentsShutdownToday)})`);
+  console.log(`  - BFT Weight / Share Sum:      ${v3LiveExport.ssotVerification.bftWeightSumPct.toFixed(2)}% / ${v3LiveExport.ssotVerification.sharePercentSumPct.toFixed(2)}%`);
+  console.log(`  - 17-Column CSV Verification:  ${csvHeaderCols.length} cols, ${csvLines.length - 1} megasite rows`);
+
+  if (
+    !isPureInt ||
+    !v3LiveExport.ssotVerification.is2DZeroDrift ||
+    v3LiveExport.ssotVerification.matrixDriftDelta !== 0 ||
+    v3LiveExport.ssotVerification.bftWeightSumPct !== 100.0 ||
+    csvHeaderCols.length !== 17 ||
+    csvLines.length !== 21
+  ) {
+    console.error('CRITICAL: Stage 5 Snapshot 2D Matrix Verification failed!');
+    process.exit(1);
+  }
 
   console.log('\n===========================================================');
   console.log('ALL SOVEREIGN INVARIANTS: SATISFIED (Z3-PROVER PASS)');

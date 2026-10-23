@@ -4,9 +4,13 @@
  */
 
 import React, { useState } from 'react';
-import { X, Download, Code, Copy, Check, FileJson, FileSpreadsheet } from 'lucide-react';
+import { X, Download, Copy, Check, FileJson, FileSpreadsheet, ShieldCheck } from 'lucide-react';
 import { CensusStats } from '../types/census.ts';
-import { INITIAL_REGIONS } from '../data/initialData.ts';
+import {
+  buildZeroDrift2DCensusSnapshot,
+  serializeReconciledRegionsToCsv,
+} from '../lib/sovereignExportAndMatrixEngine.ts';
+import { buildOmniSovereignExportV3 } from '../lib/omniSnapshotExporterV3.ts';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -27,14 +31,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const [activeTab, setActiveTab] = useState<'EXPORT' | 'API'>('EXPORT');
   const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null);
 
+  const liveSnapshotPreview = buildZeroDrift2DCensusSnapshot(stats);
+
   const downloadJSON = () => {
-    const data = {
-      timestamp: new Date().toISOString(),
-      censusStats: stats,
-      topRegions: INITIAL_REGIONS,
-      pqcSpec: 'ML-KEM-1024',
-      bftQuorum: stats.bftQuorumPercent,
-    };
+    const data = buildOmniSovereignExportV3({ rawStats: stats });
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -45,22 +45,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   };
 
   const downloadCSV = () => {
-    const headers = ['Rank', 'Region', 'City', 'Country', 'TotalAgents', 'AI', 'AGI', 'ASI', 'Apex', 'LatencyMs', 'BFTWeight'];
-    const rows = INITIAL_REGIONS.map((r) => [
-      r.rank,
-      `"${r.name}"`,
-      `"${r.city}"`,
-      `"${r.country}"`,
-      r.totalAgents,
-      r.aiAgents,
-      r.agiAgents,
-      r.asiAgents,
-      r.apexNodes,
-      r.latencyMs,
-      r.bftWeight,
-    ]);
-    const csvContent = [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const reconciled = buildZeroDrift2DCensusSnapshot(stats);
+    const csvContent = serializeReconciledRegionsToCsv(reconciled);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -76,6 +63,24 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   };
 
   const endpoints = [
+    {
+      method: 'GET',
+      path: '/api/census/export/latest.json',
+      desc: 'Downloads the live v3.0 Omni-Dimensional JSON ledger with 2D Hare-Niemeyer matrix conservation (Δ_2D = 0) and Ed25519 headers.',
+      curl: `curl -i "http://localhost:3000/api/census/export/latest.json"`,
+    },
+    {
+      method: 'GET',
+      path: '/api/census/export/latest.csv',
+      desc: 'Downloads the live 17-column Regional Telemetry CSV with LatencyRank, PopulationRank, 100.00% BFT weights, and SHA-256 Merkle leaves.',
+      curl: `curl -i "http://localhost:3000/api/census/export/latest.csv"`,
+    },
+    {
+      method: 'POST',
+      path: '/api/census/verify-snapshot',
+      desc: 'Cryptographically verifies an exported JSON snapshot for 2D row/column conservation, pure integer counters, and SHA-256 Merkle integrity.',
+      curl: `curl -X POST "http://localhost:3000/api/census/verify-snapshot" -H "Content-Type: application/json" -d @sovereign-ai-census-latest.json`,
+    },
     {
       method: 'GET',
       path: '/api/stats',
@@ -160,8 +165,47 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         {activeTab === 'EXPORT' ? (
           <div className="space-y-4 py-2">
             <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-              Export full cryptographic ledger snapshot containing current global AI demographics, regional topology latencies, capability tier breakdowns, and verified Merkle leaf digests.
+              Export full v3.0 cryptographic ledger snapshot reconciled via 2D Bi-Proportional Hare-Niemeyer integer allocation (Δ_2D = 0) across all 20 regional megasites, 4 capability tiers, 10 master platforms, and 11 sovereign jurisdictions.
             </p>
+
+            <div className="p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/5 text-[11px] font-mono space-y-1">
+              <div className="flex items-center justify-between font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4" />
+                  LIVE 2D MATRIX INVARIANT AUDIT (SOVEREIGN-V3.0)
+                </span>
+                <span>
+                  Δ_2D = {liveSnapshotPreview.ssotVerification.matrixDriftDelta} (ZERO DRIFT)
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-gray-600 dark:text-gray-300 pt-1">
+                <div>
+                  Live Total Agents:{' '}
+                  <span className="font-bold">
+                    {liveSnapshotPreview.censusStats.totalAgents.toLocaleString()}
+                  </span>
+                </div>
+                <div>
+                  20-Region Sum:{' '}
+                  <span className="font-bold">
+                    {liveSnapshotPreview.ssotVerification.regionsTotalSum.toLocaleString()}
+                  </span>
+                </div>
+                <div>
+                  4-Tier Column Sum:{' '}
+                  <span className="font-bold">
+                    {liveSnapshotPreview.ssotVerification.tiersSum.toLocaleString()}
+                  </span>
+                </div>
+                <div>
+                  BFT Weight / Share:{' '}
+                  <span className="font-bold">
+                    {liveSnapshotPreview.ssotVerification.bftWeightSumPct.toFixed(2)}% /{' '}
+                    {liveSnapshotPreview.ssotVerification.sharePercentSumPct.toFixed(2)}%
+                  </span>
+                </div>
+              </div>
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -170,10 +214,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               >
                 <div className="flex items-center gap-2 mb-1">
                   <FileJson className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
-                  <span className="font-bold text-xs">Planetary JSON Ledger</span>
+                  <span className="font-bold text-xs">Planetary JSON Ledger (v3.0)</span>
                 </div>
                 <p className="text-[11px] text-gray-500">
-                  Full nested hierarchical object with stats, regions, and PQC parameters.
+                  Zero-drift 2D matrix with 20 regions, 4 tiers, 10 platforms, 11 jurisdictions &amp; SHA-256 Merkle proofs.
                 </p>
               </button>
 
@@ -183,10 +227,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               >
                 <div className="flex items-center gap-2 mb-1">
                   <FileSpreadsheet className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" />
-                  <span className="font-bold text-xs">Top Regions CSV</span>
+                  <span className="font-bold text-xs">Top Regions CSV (17-Col)</span>
                 </div>
                 <p className="text-[11px] text-gray-500">
-                  Tabular CSV dataset of top 20 datacenters, latencies, and tier counts.
+                  Reconciled 20-megasite CSV with LatencyRank, PopulationRank, 100.00% BFT weights &amp; Merkle leaves.
                 </p>
               </button>
             </div>

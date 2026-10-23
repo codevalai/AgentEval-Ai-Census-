@@ -15,6 +15,7 @@ import { censusLiveRouter } from './routes/census-live-routes.ts';
 import { sovereignSubsystemsRouter } from './routes/missing-subsystems-routes.ts';
 import { guardrailRouter } from './routes/guardrail-routes.ts';
 import { communityDmzRouter, liveCrawlerTelemetryTrap } from './routes/community-dmz-routes.ts';
+import { governanceRouter } from './routes/governanceRoutes.ts';
 
 export const app = express();
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use(liveCrawlerTelemetryTrap);
 app.use('/api/community', communityDmzRouter);
 app.use('/api/census', censusLiveRouter);
 app.use('/api/guardrails', guardrailRouter);
+app.use('/api', governanceRouter);
 app.use('/api', sovereignSubsystemsRouter);
 app.use('/api', harvesterRouter);
 app.use('/api/v2', censusOrchestratorRouter);
@@ -207,11 +209,23 @@ app.post('/api/xerj/lease', async (req: Request, res: Response) => {
 app.get('/api/census/live', async (_req: Request, res: Response) => {
   try {
     const { EXTERNAL_LIVE_FEEDS, aggregateLiveCensusFeeds } = await import('./data/omniscientFactoryMetaLayer.ts');
+    const { generateMasterV3CensusExport } = await import('./services/master-snapshot-exporter.ts');
     const summary = aggregateLiveCensusFeeds(EXTERNAL_LIVE_FEEDS);
+    const v3Snapshot = await generateMasterV3CensusExport();
+
+    res.setHeader('X-Sovereign-Schema-Version', v3Snapshot.schemaVersion);
+    res.setHeader('X-Sovereign-Merkle-Root', v3Snapshot.cryptographicAttestation.merkleRootSha256);
+    res.setHeader('X-Sovereign-Ed25519-Sig', v3Snapshot.cryptographicAttestation.ed25519Signature);
+    res.setHeader('X-Sovereign-SSOT-Drift', String(v3Snapshot.ssotVerification.matrixDriftDelta));
+    res.setHeader('X-Sovereign-Guardrail-Status', v3Snapshot.guardrailSpineStatus.layersEnforced);
+
     return res.status(200).json({
       success: true,
       summary,
       feeds: EXTERNAL_LIVE_FEEDS,
+      v3ReconciledStats: v3Snapshot.censusStats,
+      ssotVerification: v3Snapshot.ssotVerification,
+      cryptographicAttestation: v3Snapshot.cryptographicAttestation,
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err?.message || 'Live census feed aggregation failed' });

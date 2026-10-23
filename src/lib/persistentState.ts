@@ -7,6 +7,8 @@ import { doc, getDoc, setDoc, onSnapshot, Unsubscribe } from 'firebase/firestore
 import { db } from './firebase.ts';
 import { CensusStats, DurableCensusState } from '../types/census.ts';
 import { INITIAL_STATS } from '../data/initialData.ts';
+import { GENESIS_YEAR_PRIOR_TO_TODAY } from './exactTickAccumulator.ts';
+import { T0_GLOBAL_BASELINE, allocateHareNiemeyerIntegers } from './sovereignExportAndMatrixEngine.ts';
 
 const CENSUS_DOC_ID = 'stats';
 const LOCAL_NODE_ID = typeof crypto !== 'undefined' && crypto.randomUUID
@@ -35,6 +37,7 @@ export class PersistentCensusStateManager {
 
   /**
    * Helper to compute real continuous elapsed time growth from persisted durable state.
+   * Emits 100% pure integers and guarantees netGrowthToday === agentsBornToday - agentsShutdownToday.
    */
   public hydrateStatsFromState(parsed: DurableCensusState): CensusStats {
     if (
@@ -48,17 +51,40 @@ export class PersistentCensusStateManager {
     const now = Date.now();
     const elapsedSeconds = Math.min(3600, Math.max(0, (now - (parsed.lastPersistedTimestamp || now)) / 1000));
 
-    const birthsDelta = elapsedSeconds * INITIAL_STATS.birthsPerSec;
-    const shutdownsDelta = elapsedSeconds * INITIAL_STATS.shutdownsPerSec;
+    const birthsDelta = Math.round(elapsedSeconds * INITIAL_STATS.birthsPerSec);
+    const shutdownsDelta = Math.round(elapsedSeconds * INITIAL_STATS.shutdownsPerSec);
     const netDelta = birthsDelta - shutdownsDelta;
+
+    const totalAgents = Math.round((parsed.totalAgents || INITIAL_STATS.totalAgents) + netDelta);
+    const agentsBornToday = Math.max(
+      INITIAL_STATS.agentsBornToday,
+      Math.round((parsed.agentsBornToday || INITIAL_STATS.agentsBornToday) + birthsDelta)
+    );
+    const agentsShutdownToday = Math.max(
+      INITIAL_STATS.agentsShutdownToday,
+      Math.round((parsed.agentsShutdownToday || INITIAL_STATS.agentsShutdownToday) + shutdownsDelta)
+    );
+    const netGrowthToday = agentsBornToday - agentsShutdownToday;
+    const agentsCreatedYear = GENESIS_YEAR_PRIOR_TO_TODAY + agentsBornToday;
+
+    const [aiAgents, agiAgents, asiAgents, apexAgents] = allocateHareNiemeyerIntegers(totalAgents, [
+      T0_GLOBAL_BASELINE.aiAgents,
+      T0_GLOBAL_BASELINE.agiAgents,
+      T0_GLOBAL_BASELINE.asiAgents,
+      T0_GLOBAL_BASELINE.apexAgents,
+    ]);
 
     return {
       ...INITIAL_STATS,
-      totalAgents: (parsed.totalAgents || INITIAL_STATS.totalAgents) + netDelta,
-      agentsBornToday: Math.max(INITIAL_STATS.agentsBornToday, (parsed.agentsBornToday || INITIAL_STATS.agentsBornToday) + birthsDelta),
-      agentsShutdownToday: Math.max(INITIAL_STATS.agentsShutdownToday, (parsed.agentsShutdownToday || INITIAL_STATS.agentsShutdownToday) + shutdownsDelta),
-      netGrowthToday: Math.max(INITIAL_STATS.netGrowthToday, (parsed.netGrowthToday || INITIAL_STATS.netGrowthToday) + netDelta),
-      agentsCreatedYear: Math.max(INITIAL_STATS.agentsCreatedYear, (parsed.agentsCreatedYear || INITIAL_STATS.agentsCreatedYear) + birthsDelta),
+      totalAgents,
+      aiAgents,
+      agiAgents,
+      asiAgents,
+      apexAgents,
+      agentsBornToday,
+      agentsShutdownToday,
+      netGrowthToday,
+      agentsCreatedYear,
       bftQuorumPercent: parsed.bftQuorumPercent || INITIAL_STATS.bftQuorumPercent,
       defconLevel: parsed.defconLevel || INITIAL_STATS.defconLevel,
     };

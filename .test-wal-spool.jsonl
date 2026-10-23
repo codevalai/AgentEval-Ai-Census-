@@ -8,3 +8,9 @@
 {"test":2,"_wal_spooled_at":"2026-10-21T07:43:40.112Z","_wal_reason":"Simulated network timeout"}
 {"test":1,"_wal_spooled_at":"2026-10-22T22:37:19.488Z","_wal_reason":"Simulated network timeout"}
 {"test":2,"_wal_spooled_at":"2026-10-22T22:37:19.488Z","_wal_reason":"Simulated network timeout"}
+{"test":1,"_wal_spooled_at":"2026-10-23T01:34:22.093Z","_wal_reason":"Simulated network timeout"}
+{"test":2,"_wal_spooled_at":"2026-10-23T01:34:22.093Z","_wal_reason":"Simulated network timeout"}
+{"test":1,"_wal_spooled_at":"2026-10-23T01:34:56.601Z","_wal_reason":"Simulated network timeout"}
+{"test":2,"_wal_spooled_at":"2026-10-23T01:34:56.601Z","_wal_reason":"Simulated network timeout"}
+{"test":1,"_wal_spooled_at":"2026-10-23T02:14:06.083Z","_wal_reason":"Simulated network timeout"}
+{"test":2,"_wal_spooled_at":"2026-10-23T02:14:06.083Z","_wal_reason":"Simulated network timeout"}

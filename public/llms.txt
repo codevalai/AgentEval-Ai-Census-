@@ -4,8 +4,11 @@
 > Repository: https://github.com/codevalai/AgentEval-Ai-Census-
 > Constitutional Invariant: Zero-Drift SSOT (Delta = 0 via Hare-Niemeyer) & 7-Layer Sovereign Guardrail Spine.
 
-## 1. Read-Only Live Telemetry Endpoints
-- `GET /api/census/live`: Live 64-probe census & Zero-Drift SSOT summary
+## 1. Read-Only Live Telemetry & Zero-Drift Export Endpoints
+- `GET /api/census/live`: Live 64-probe census & Zero-Drift SSOT summary with `X-Sovereign-*` cryptographic headers
+- `GET /api/census/export/latest.json`: Live v3.0 Omni-Dimensional JSON ledger with 2D Bi-Proportional Hare-Niemeyer matrix conservation (Delta_2D = 0) across 20 megasites, 4 tiers, 10 platforms, and 11 jurisdictions
+- `GET /api/census/export/latest.csv`: Live 17-column Regional Telemetry CSV with `LatencyRank`, `PopulationRank`, exact 100.00% `BFTWeight`, and per-row `MerkleLeafSha256`
+- `POST /api/census/verify-snapshot`: Cryptographic 2D matrix verifier confirming zero floating-point decimals, `netGrowthToday == agentsBornToday - agentsShutdownToday`, and `Delta_2D = 0`
 - `GET /api/census/meta-layers-24`: All 24 Unified Meta-Layers, 15 Swarms, and 64 public wire endpoints
 - `GET /api/census/factories`: Tiers 1–16 Master AI Factories & Top 30 Autonomous SWE IDEs
 - `GET /api/sovereign-300/catalog`: The Sovereign 300 (30 disciplines x 10 repositories) with Kahn Acyclic DAG proof

@@ -33,6 +33,7 @@ import { ApexAnalystDrawer } from './components/ApexAnalystDrawer.tsx';
 import { ExportModal } from './components/ExportModal.tsx';
 import { EnterpriseRealityModal } from './components/EnterpriseRealityModal.tsx';
 import { GitHubControlCenterModal } from './components/GitHubControlCenterModal.tsx';
+import { SovereignGovernanceModal } from './components/SovereignGovernanceModal.tsx';
 import { LiveEventFeed } from './components/LiveEventFeed.tsx';
 import { AcceleratorControlPanel } from './components/AcceleratorControlPanel.tsx';
 import { GlobalCivilizationDashboard } from './components/GlobalCivilizationDashboard.tsx';
@@ -76,6 +77,8 @@ import { sovereignEventFabric, sovereignAuditSpine } from './lib/merkleSpine.ts'
 import { persistentCensusState } from './lib/persistentState.ts';
 import { agentBirthAccelerator } from './lib/agentBirthAccelerator.ts';
 import { censusSSOT } from './lib/censusSSOT.ts';
+import { GENESIS_YEAR_PRIOR_TO_TODAY } from './lib/exactTickAccumulator.ts';
+import { T0_GLOBAL_BASELINE, allocateHareNiemeyerIntegers } from './lib/sovereignExportAndMatrixEngine.ts';
 import { db } from './lib/firebase.ts';
 import { collection, query, orderBy, limit, onSnapshot, doc, setDoc } from 'firebase/firestore';
 
@@ -102,6 +105,7 @@ export default function App() {
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isEnterpriseOpen, setIsEnterpriseOpen] = useState(false);
   const [isGitHubOpen, setIsGitHubOpen] = useState(false);
+  const [isParliamentOpen, setIsParliamentOpen] = useState(false);
 
   // Live event items stream
   const [events, setEvents] = useState<LiveEventItem[]>([
@@ -275,14 +279,33 @@ export default function App() {
           currentStats.shutdownsPerSec
         );
 
-        setStats((prev) => ({
-          ...prev,
-          totalAgents: prev.totalAgents + accelerated.netDelta,
-          agentsBornToday: prev.agentsBornToday + accelerated.birthDelta,
-          agentsShutdownToday: prev.agentsShutdownToday + accelerated.shutdownDelta,
-          netGrowthToday: prev.netGrowthToday + accelerated.netDelta,
-          agentsCreatedYear: prev.agentsCreatedYear + accelerated.birthDelta,
-        }));
+        setStats((prev) => {
+          const nextBorn = Math.round(prev.agentsBornToday + accelerated.birthDelta);
+          const nextShutdown = Math.round(prev.agentsShutdownToday + accelerated.shutdownDelta);
+          const nextNet = nextBorn - nextShutdown;
+          const nextTotal = Math.round(prev.totalAgents + accelerated.netDelta);
+          const [aiAgents, agiAgents, asiAgents, apexAgents] = allocateHareNiemeyerIntegers(
+            nextTotal,
+            [
+              T0_GLOBAL_BASELINE.aiAgents,
+              T0_GLOBAL_BASELINE.agiAgents,
+              T0_GLOBAL_BASELINE.asiAgents,
+              T0_GLOBAL_BASELINE.apexAgents,
+            ]
+          );
+          return {
+            ...prev,
+            totalAgents: nextTotal,
+            aiAgents,
+            agiAgents,
+            asiAgents,
+            apexAgents,
+            agentsBornToday: nextBorn,
+            agentsShutdownToday: nextShutdown,
+            netGrowthToday: nextNet,
+            agentsCreatedYear: GENESIS_YEAR_PRIOR_TO_TODAY + nextBorn,
+          };
+        });
       }
       rafId = window.requestAnimationFrame(step);
     };
@@ -437,6 +460,7 @@ export default function App() {
         onOpenExport={() => setIsExportOpen(true)}
         onOpenEnterpriseConsole={() => setIsEnterpriseOpen(true)}
         onOpenGitHub={() => setIsGitHubOpen(true)}
+        onOpenParliament={() => setIsParliamentOpen(true)}
       />
 
       <main>
@@ -705,6 +729,13 @@ export default function App() {
       <GitHubControlCenterModal
         isOpen={isGitHubOpen}
         onClose={() => setIsGitHubOpen(false)}
+        theme={theme}
+      />
+
+      <SovereignGovernanceModal
+        isOpen={isParliamentOpen}
+        onClose={() => setIsParliamentOpen(false)}
+        stats={stats}
         theme={theme}
       />
 

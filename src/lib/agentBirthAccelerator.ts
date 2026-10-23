@@ -42,6 +42,8 @@ export class AgentBirthAccelerator {
   private readonly defaultCapacity = 64;
   private nextSpikeScheduledInMs = 15000; // Next automatic burst in 15s
   private spikeElapsedMs = 0;
+  private subIntegerBirthCarry = 0.0;
+  private subIntegerShutdownCarry = 0.0;
   private subscribers: Set<AcceleratorSubscriber> = new Set();
 
   constructor() {
@@ -112,9 +114,8 @@ export class AgentBirthAccelerator {
   }
 
   /**
-   * Computes the accelerated delta for a given time slice (e.g. 200ms tick),
-   * applying continuous batching throughput formulas, warm-pool cache hits,
-   * and periodic autonomous burst spikes.
+   * Computes the accelerated integer delta for a given time slice (e.g. 200ms tick),
+   * retaining sub-integer fractions in carry registers so exported counters are 100% pure integers.
    */
   public tick(
     intervalSec: number,
@@ -167,9 +168,16 @@ export class AgentBirthAccelerator {
       (baseShutdownRate + shutdownJitter) * Math.sqrt(this.state.userSpeedMultiplier)
     );
 
-    // Continuous batching increment deltas
-    const birthDelta = Math.max(0, instantaneousBirthRate * intervalSec);
-    const shutdownDelta = Math.max(0, instantaneousShutdownRate * intervalSec);
+    // Sub-integer carry-lookahead accumulator: emit pure whole integers
+    const rawBirthDelta = Math.max(0, instantaneousBirthRate * intervalSec) + this.subIntegerBirthCarry;
+    const rawShutdownDelta = Math.max(0, instantaneousShutdownRate * intervalSec) + this.subIntegerShutdownCarry;
+
+    const birthDelta = Math.trunc(rawBirthDelta);
+    const shutdownDelta = Math.trunc(rawShutdownDelta);
+
+    this.subIntegerBirthCarry = rawBirthDelta - birthDelta;
+    this.subIntegerShutdownCarry = rawShutdownDelta - shutdownDelta;
+
     const netDelta = birthDelta - shutdownDelta;
 
     // Update internal queue and metrics
